@@ -10,8 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AskRouteImport } from './routes/ask'
+import { Route as CompareRouteImport } from './routes/compare'
+import { Route as DiscoveryRouteImport } from './routes/discovery'
 import { Route as GuardianRouteImport } from './routes/guardian'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as IntakeRouteImport } from './routes/intake'
+import { Route as LibraryRouteImport } from './routes/library'
+import { Route as PlanRouteImport } from './routes/plan'
+import { Route as ReadinessRouteImport } from './routes/readiness'
 import { Route as RecordRouteImport } from './routes/record'
 
 const IndexRoute = IndexRouteImport.update({
@@ -19,14 +26,49 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AskRoute = AskRouteImport.update({
+  id: '/ask',
+  path: '/ask',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscoveryRoute = DiscoveryRouteImport.update({
+  id: '/discovery',
+  path: '/discovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuardianRoute = GuardianRouteImport.update({
   id: '/guardian',
   path: '/guardian',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IntakeRoute = IntakeRouteImport.update({
   id: '/intake',
   path: '/intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanRoute = PlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReadinessRoute = ReadinessRouteImport.update({
+  id: '/readiness',
+  path: '/readiness',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecordRoute = RecordRouteImport.update({
@@ -37,35 +79,97 @@ const RecordRoute = RecordRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ask': typeof AskRoute
+  '/compare': typeof CompareRoute
+  '/discovery': typeof DiscoveryRoute
   '/guardian': typeof GuardianRoute
+  '/help': typeof HelpRoute
   '/intake': typeof IntakeRoute
+  '/library': typeof LibraryRoute
+  '/plan': typeof PlanRoute
+  '/readiness': typeof ReadinessRoute
   '/record': typeof RecordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ask': typeof AskRoute
+  '/compare': typeof CompareRoute
+  '/discovery': typeof DiscoveryRoute
   '/guardian': typeof GuardianRoute
+  '/help': typeof HelpRoute
   '/intake': typeof IntakeRoute
+  '/library': typeof LibraryRoute
+  '/plan': typeof PlanRoute
+  '/readiness': typeof ReadinessRoute
   '/record': typeof RecordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ask': typeof AskRoute
+  '/compare': typeof CompareRoute
+  '/discovery': typeof DiscoveryRoute
   '/guardian': typeof GuardianRoute
+  '/help': typeof HelpRoute
   '/intake': typeof IntakeRoute
+  '/library': typeof LibraryRoute
+  '/plan': typeof PlanRoute
+  '/readiness': typeof ReadinessRoute
   '/record': typeof RecordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/guardian' | '/intake' | '/record'
+  fullPaths:
+    | '/'
+    | '/ask'
+    | '/compare'
+    | '/discovery'
+    | '/guardian'
+    | '/help'
+    | '/intake'
+    | '/library'
+    | '/plan'
+    | '/readiness'
+    | '/record'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/guardian' | '/intake' | '/record'
-  id: '__root__' | '/' | '/guardian' | '/intake' | '/record'
+  to:
+    | '/'
+    | '/ask'
+    | '/compare'
+    | '/discovery'
+    | '/guardian'
+    | '/help'
+    | '/intake'
+    | '/library'
+    | '/plan'
+    | '/readiness'
+    | '/record'
+  id:
+    | '__root__'
+    | '/'
+    | '/ask'
+    | '/compare'
+    | '/discovery'
+    | '/guardian'
+    | '/help'
+    | '/intake'
+    | '/library'
+    | '/plan'
+    | '/readiness'
+    | '/record'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AskRoute: typeof AskRoute
+  CompareRoute: typeof CompareRoute
+  DiscoveryRoute: typeof DiscoveryRoute
   GuardianRoute: typeof GuardianRoute
+  HelpRoute: typeof HelpRoute
   IntakeRoute: typeof IntakeRoute
+  LibraryRoute: typeof LibraryRoute
+  PlanRoute: typeof PlanRoute
+  ReadinessRoute: typeof ReadinessRoute
   RecordRoute: typeof RecordRoute
 }
 
@@ -78,6 +182,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ask': {
+      id: '/ask'
+      path: '/ask'
+      fullPath: '/ask'
+      preLoaderRoute: typeof AskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discovery': {
+      id: '/discovery'
+      path: '/discovery'
+      fullPath: '/discovery'
+      preLoaderRoute: typeof DiscoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guardian': {
       id: '/guardian'
       path: '/guardian'
@@ -85,11 +210,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuardianRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/intake': {
       id: '/intake'
       path: '/intake'
       fullPath: '/intake'
       preLoaderRoute: typeof IntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan': {
+      id: '/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof PlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/readiness': {
+      id: '/readiness'
+      path: '/readiness'
+      fullPath: '/readiness'
+      preLoaderRoute: typeof ReadinessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/record': {
@@ -104,8 +257,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AskRoute: AskRoute,
+  CompareRoute: CompareRoute,
+  DiscoveryRoute: DiscoveryRoute,
   GuardianRoute: GuardianRoute,
+  HelpRoute: HelpRoute,
   IntakeRoute: IntakeRoute,
+  LibraryRoute: LibraryRoute,
+  PlanRoute: PlanRoute,
+  ReadinessRoute: ReadinessRoute,
   RecordRoute: RecordRoute,
 }
 export const routeTree = rootRouteImport
