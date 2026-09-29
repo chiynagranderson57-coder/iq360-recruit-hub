@@ -4,6 +4,9 @@ import { useState, type FormEvent } from "react";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { signOut, useSession } from "@/hooks/use-session";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("auth");
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -34,8 +37,13 @@ function AuthPage() {
     const { supabase } = await import("@/lib/supabase");
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (err) setError(err.message);
-    else void navigate({ to: "/record" });
+    if (err) {
+      log.warn("sign_in_failed", { code: err.code ?? null, status: err.status ?? null });
+      setError(err.message);
+    } else {
+      log.info("sign_in_succeeded");
+      void navigate({ to: "/record" });
+    }
   }
 
   return (
