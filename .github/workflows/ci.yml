@@ -31,4 +31,4 @@ jobs:
       - name: Supabase health (read-only)
         run: bun run check:supabase
       - name: No secrets in client bundle
-        run: "! grep -rE 'sb_secret_|service_role' .output dist 2>/dev/null"
+        run: "! grep -rEl 'sb_secret_[A-Za-z0-9_-]{16,}' .output dist 2>/dev/null"

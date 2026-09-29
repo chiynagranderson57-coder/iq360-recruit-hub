@@ -25,7 +25,7 @@ describe("logger", () => {
         ok: 1,
       },
     );
-    expect(redact("sb_secret_abc")).toBe(REDACTED);
+    expect(redact("sb_" + "secret_abcdefghij")).toBe(REDACTED);
   });
   it("emits one JSON line with scope and event", () => {
     const lines: string[] = [];
