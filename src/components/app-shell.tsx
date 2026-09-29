@@ -72,5 +72,7 @@ export function AppShell({ eyebrow, title, description, children }: AppShellProp
 }
 
 function shortLabel(name: string) {
-  return name.split(" & ")[0].replace("Resource", "Library").replace("My Plan", "Plan");
+  const base = name.split(" & ")[0] ?? name;
+  return base.replace("Resource", "Library").replace("My Plan", "Plan");
 }
+
