@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AskRouteImport } from './routes/ask'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as DiscoveryRouteImport } from './routes/discovery'
 import { Route as GuardianRouteImport } from './routes/guardian'
@@ -29,6 +30,11 @@ const IndexRoute = IndexRouteImport.update({
 const AskRoute = AskRouteImport.update({
   id: '/ask',
   path: '/ask',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompareRoute = CompareRouteImport.update({
@@ -80,6 +86,7 @@ const RecordRoute = RecordRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ask': typeof AskRoute
+  '/auth': typeof AuthRoute
   '/compare': typeof CompareRoute
   '/discovery': typeof DiscoveryRoute
   '/guardian': typeof GuardianRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ask': typeof AskRoute
+  '/auth': typeof AuthRoute
   '/compare': typeof CompareRoute
   '/discovery': typeof DiscoveryRoute
   '/guardian': typeof GuardianRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ask': typeof AskRoute
+  '/auth': typeof AuthRoute
   '/compare': typeof CompareRoute
   '/discovery': typeof DiscoveryRoute
   '/guardian': typeof GuardianRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ask'
+    | '/auth'
     | '/compare'
     | '/discovery'
     | '/guardian'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ask'
+    | '/auth'
     | '/compare'
     | '/discovery'
     | '/guardian'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/ask'
+    | '/auth'
     | '/compare'
     | '/discovery'
     | '/guardian'
@@ -162,6 +174,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AskRoute: typeof AskRoute
+  AuthRoute: typeof AuthRoute
   CompareRoute: typeof CompareRoute
   DiscoveryRoute: typeof DiscoveryRoute
   GuardianRoute: typeof GuardianRoute
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/ask'
       fullPath: '/ask'
       preLoaderRoute: typeof AskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/compare': {
@@ -258,6 +278,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AskRoute: AskRoute,
+  AuthRoute: AuthRoute,
   CompareRoute: CompareRoute,
   DiscoveryRoute: DiscoveryRoute,
   GuardianRoute: GuardianRoute,
