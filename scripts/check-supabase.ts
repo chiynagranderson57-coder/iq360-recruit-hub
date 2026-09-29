@@ -3,8 +3,8 @@
  * Calls the Auth health endpoint (schema-independent, no writes).
  * Run: bun scripts/check-supabase.ts
  */
-const url = process.env.VITE_SUPABASE_URL;
-const key = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const url = process.env["VITE_SUPABASE_URL"];
+const key = process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
 if (!url || !key) {
   console.error("Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY");
   process.exit(1);
