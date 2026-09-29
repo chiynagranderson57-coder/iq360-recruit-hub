@@ -40,12 +40,20 @@ describe.skipIf(!ready)("SRIQ-26 RLS end-to-end (synthetic users)", () => {
   const B = env("SRIQ_E2E_ATHLETE_B_ID");
 
   it("athlete can read own record", async () => {
-    const rows = await visibleAthletes(env("SRIQ_E2E_ATHLETE_A_EMAIL"), env("SRIQ_E2E_ATHLETE_A_PASSWORD"), A);
+    const rows = await visibleAthletes(
+      env("SRIQ_E2E_ATHLETE_A_EMAIL"),
+      env("SRIQ_E2E_ATHLETE_A_PASSWORD"),
+      A,
+    );
     expect(rows).toHaveLength(1);
   });
 
   it("athlete cannot read another athlete record", async () => {
-    const rows = await visibleAthletes(env("SRIQ_E2E_ATHLETE_A_EMAIL"), env("SRIQ_E2E_ATHLETE_A_PASSWORD"), B);
+    const rows = await visibleAthletes(
+      env("SRIQ_E2E_ATHLETE_A_EMAIL"),
+      env("SRIQ_E2E_ATHLETE_A_PASSWORD"),
+      B,
+    );
     expect(rows).toHaveLength(0);
   });
 
