@@ -3,7 +3,12 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { decideAthleteAccess } from "./authorization";
-import { buildPrincipal, consentState, type AthleteAccessRow, type GuardianConsentRow } from "./sriq-data";
+import {
+  buildPrincipal,
+  consentState,
+  type AthleteAccessRow,
+  type GuardianConsentRow,
+} from "./sriq-data";
 
 // Synthetic, in-memory fixtures only. No production users or rows.
 const ATHLETE_A = "athlete-a";
@@ -15,7 +20,12 @@ const GUARDIAN_REVOKED = "user-guardian-revoked";
 const access: AthleteAccessRow[] = [
   { athlete_id: ATHLETE_A, user_id: USER_A, access_role: "athlete", status: "active" },
   { athlete_id: ATHLETE_A, user_id: GUARDIAN_OK, access_role: "parent_guardian", status: "active" },
-  { athlete_id: ATHLETE_A, user_id: GUARDIAN_REVOKED, access_role: "parent_guardian", status: "active" },
+  {
+    athlete_id: ATHLETE_A,
+    user_id: GUARDIAN_REVOKED,
+    access_role: "parent_guardian",
+    status: "active",
+  },
 ];
 
 const consents: GuardianConsentRow[] = [
@@ -37,7 +47,11 @@ const consents: GuardianConsentRow[] = [
   },
 ];
 
-const read = (athleteId: string) => ({ athleteId, action: "read" as const, capability: "readiness_snapshot" });
+const read = (athleteId: string) => ({
+  athleteId,
+  action: "read" as const,
+  capability: "readiness_snapshot",
+});
 
 describe("SRIQ-26 authorization expectations", () => {
   it("allows authorized athlete self-access", () => {
@@ -76,7 +90,11 @@ describe("SRIQ-26 authorization expectations", () => {
 
   it("denies unauthenticated and unknown roles", () => {
     expect(decideAthleteAccess(null, read(ATHLETE_A)).allowed).toBe(false);
-    const staff = buildPrincipal("x", [{ athlete_id: ATHLETE_A, user_id: "x", access_role: "unknown", status: "active" }], []);
+    const staff = buildPrincipal(
+      "x",
+      [{ athlete_id: ATHLETE_A, user_id: "x", access_role: "unknown", status: "active" }],
+      [],
+    );
     expect(staff).toBeNull();
   });
 });

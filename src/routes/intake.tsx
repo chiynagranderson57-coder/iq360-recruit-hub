@@ -51,8 +51,8 @@ function IntakePage() {
           ]}
           footer={
             <GuardrailNote>
-              Intake never asks for or infers recruiting interest from colleges. Only athlete-supplied
-              or verified information enters the record.
+              Intake never asks for or infers recruiting interest from colleges. Only
+              athlete-supplied or verified information enters the record.
             </GuardrailNote>
           }
         />

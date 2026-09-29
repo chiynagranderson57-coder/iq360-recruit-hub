@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { AthleteProfilePanel } from "@/components/athlete-data";
 import { AppShell } from "@/components/app-shell";
 import { GuardrailNote, ScopePanel } from "@/components/scope-panel";
 
@@ -15,7 +16,8 @@ export const Route = createFileRoute("/record")({
       { property: "og:title", content: "Athlete Intelligence Record — Sports Recruit IQ360™" },
       {
         property: "og:description",
-        content: "Verified athlete information, documents, and provenance in one permissioned record.",
+        content:
+          "Verified athlete information, documents, and provenance in one permissioned record.",
       },
     ],
   }),
@@ -29,6 +31,7 @@ function RecordPage() {
       title="Athlete Intelligence Record"
       description="One durable record per athlete: identity, academics, athletic profile, media, and documents, each with provenance."
     >
+      <AthleteProfilePanel />
       <div className="grid gap-4 lg:grid-cols-2">
         <ScopePanel
           title="Record sections"

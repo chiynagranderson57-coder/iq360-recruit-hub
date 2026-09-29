@@ -28,9 +28,7 @@ export interface AccessRequest {
   capability: string;
 }
 
-export type AccessDecision =
-  | { allowed: true; reason: string }
-  | { allowed: false; reason: string };
+export type AccessDecision = { allowed: true; reason: string } | { allowed: false; reason: string };
 
 const deny = (reason: string): AccessDecision => ({ allowed: false, reason });
 const allow = (reason: string): AccessDecision => ({ allowed: true, reason });
@@ -50,7 +48,10 @@ export function decideAthleteAccess(
   }
 
   if (principal.role === "athlete") {
-    if (principal.isMinorContext && !principal.activeConsentAthleteIds.includes(request.athleteId)) {
+    if (
+      principal.isMinorContext &&
+      !principal.activeConsentAthleteIds.includes(request.athleteId)
+    ) {
       return deny("minor_requires_active_guardian_consent");
     }
     return allow("athlete_owns_record");

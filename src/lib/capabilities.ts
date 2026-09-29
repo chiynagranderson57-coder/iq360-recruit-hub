@@ -80,8 +80,7 @@ export const CAPABILITIES: Capability[] = [
     key: "opportunity_comparison",
     path: "/compare",
     name: "Opportunity Comparison",
-    summary:
-      "Side-by-side comparison of saved opportunities on consistent, factual criteria.",
+    summary: "Side-by-side comparison of saved opportunities on consistent, factual criteria.",
     audiences: ["athlete", "guardian", "bfm_ops"],
     status: "scaffolded",
   },
@@ -98,8 +97,7 @@ export const CAPABILITIES: Capability[] = [
     key: "resource_library",
     path: "/library",
     name: "Resource & Pathway Library",
-    summary:
-      "Educational pathways and reference material, versioned and attributable.",
+    summary: "Educational pathways and reference material, versioned and attributable.",
     audiences: ["athlete", "guardian", "bfm_ops"],
     status: "scaffolded",
   },
@@ -107,8 +105,7 @@ export const CAPABILITIES: Capability[] = [
     key: "human_help",
     path: "/help",
     name: "Human Help Request",
-    summary:
-      "Escalation to BFM operations staff with an auditable request trail.",
+    summary: "Escalation to BFM operations staff with an auditable request trail.",
     audiences: ["athlete", "guardian", "bfm_ops"],
     status: "scaffolded",
   },

@@ -63,7 +63,10 @@ export function AthleteProfilePanel() {
 }
 
 function AthleteProfileInner({ userId }: { userId: string }) {
-  const access = useQuery({ queryKey: ["athlete_access", userId], queryFn: () => fetchMyAccess(userId) });
+  const access = useQuery({
+    queryKey: ["athlete_access", userId],
+    queryFn: () => fetchMyAccess(userId),
+  });
   const ids = (access.data ?? []).filter((r) => r.status === "active").map((r) => r.athlete_id);
   const athletes = useQuery({
     queryKey: ["athletes", ids],
@@ -104,7 +107,10 @@ function GuardianConsentInner() {
       {consents.data?.map((c) => {
         const state = consentState(c);
         return (
-          <div key={c.id} className="flex items-center justify-between rounded-md border border-border p-3">
+          <div
+            key={c.id}
+            className="flex items-center justify-between rounded-md border border-border p-3"
+          >
             <div>
               <p className="font-medium">Athlete {c.athlete_id.slice(0, 8)}</p>
               <p className="text-muted-foreground">
@@ -128,7 +134,10 @@ export function ReadinessPanel() {
 }
 
 function ReadinessInner({ userId }: { userId: string }) {
-  const access = useQuery({ queryKey: ["athlete_access", userId], queryFn: () => fetchMyAccess(userId) });
+  const access = useQuery({
+    queryKey: ["athlete_access", userId],
+    queryFn: () => fetchMyAccess(userId),
+  });
   const ids = (access.data ?? []).filter((r) => r.status === "active").map((r) => r.athlete_id);
   const readiness = useQuery({
     queryKey: ["athlete_readiness", ids],
@@ -137,7 +146,11 @@ function ReadinessInner({ userId }: { userId: string }) {
   });
   return (
     <Frame title="Readiness">
-      {access.error ? <Err e={access.error} /> : readiness.error ? <Err e={readiness.error} /> : null}
+      {access.error ? (
+        <Err e={access.error} />
+      ) : readiness.error ? (
+        <Err e={readiness.error} />
+      ) : null}
       {readiness.isSuccess && readiness.data.length === 0 ? <Empty /> : null}
       {readiness.data?.map((r) => (
         <div key={r.id} className="rounded-md border border-border p-3">
