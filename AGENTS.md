@@ -16,3 +16,4 @@
 - All athlete-scoped access decisions go through `decideAthleteAccess` in `src/lib/authorization.ts` and are enforced server-side, because deny-by-default must not depend on UI checks.
 - Canonical product data belongs to the external Supabase project `lqthjvzjkbwtggrhgpts`; never provision a second database for it, to keep one system of record.
 - Colors, fonts, and elevation come from tokens in `src/styles.css`; components must not hardcode color utilities so theming stays centralized.
+- Browser Supabase access goes through `src/lib/supabase.ts` using only VITE_ publishable env values, so no secret key ever reaches client code.
