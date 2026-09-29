@@ -17,3 +17,5 @@
 - Canonical product data belongs to the external Supabase project `lqthjvzjkbwtggrhgpts`; never provision a second database for it, to keep one system of record.
 - Colors, fonts, and elevation come from tokens in `src/styles.css`; components must not hardcode color utilities so theming stays centralized.
 - Browser Supabase access goes through `src/lib/supabase.ts` using only VITE_ publishable env values, so no secret key ever reaches client code.
+- Feature flags live in `src/lib/feature-flags.ts`, default OFF, and never gate authorization, so rollout toggles can't weaken access control.
+- App logging goes through `src/lib/logger.ts`, which redacts PII and credentials, so athlete data never lands in logs.

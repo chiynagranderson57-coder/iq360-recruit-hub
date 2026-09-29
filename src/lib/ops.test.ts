@@ -17,12 +17,14 @@ describe("feature flags", () => {
 
 describe("logger", () => {
   it("redacts sensitive keys and secret-looking values", () => {
-    expect(redact({ email: "a@b.c", password: "x", nested: { access_token: "t" }, ok: 1 })).toEqual({
-      email: REDACTED,
-      password: REDACTED,
-      nested: { access_token: REDACTED },
-      ok: 1,
-    });
+    expect(redact({ email: "a@b.c", password: "x", nested: { access_token: "t" }, ok: 1 })).toEqual(
+      {
+        email: REDACTED,
+        password: REDACTED,
+        nested: { access_token: REDACTED },
+        ok: 1,
+      },
+    );
     expect(redact("sb_secret_abc")).toBe(REDACTED);
   });
   it("emits one JSON line with scope and event", () => {

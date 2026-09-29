@@ -2,12 +2,12 @@
 
 ## Environment model
 
-| Environment | Where it runs | Frontend | Backend (Supabase) | Status |
-|---|---|---|---|---|
-| Local development | Developer machine / Lovable sandbox (`bun run dev`) | localhost | `lqthjvzjkbwtggrhgpts` (publishable key) | Active |
-| Preview (pre-release) | Lovable preview URL `id-preview--a31643c5-...lovable.app` | latest editor build | `lqthjvzjkbwtggrhgpts` | Active, not public |
-| Staging | — | — | — | **Does not exist.** See blockers |
-| Production | Lovable publish (not yet published) | — | `lqthjvzjkbwtggrhgpts` | **Not deployed** |
+| Environment           | Where it runs                                             | Frontend            | Backend (Supabase)                       | Status                           |
+| --------------------- | --------------------------------------------------------- | ------------------- | ---------------------------------------- | -------------------------------- |
+| Local development     | Developer machine / Lovable sandbox (`bun run dev`)       | localhost           | `lqthjvzjkbwtggrhgpts` (publishable key) | Active                           |
+| Preview (pre-release) | Lovable preview URL `id-preview--a31643c5-...lovable.app` | latest editor build | `lqthjvzjkbwtggrhgpts`                   | Active, not public               |
+| Staging               | —                                                         | —                   | —                                        | **Does not exist.** See blockers |
+| Production            | Lovable publish (not yet published)                       | —                   | `lqthjvzjkbwtggrhgpts`                   | **Not deployed**                 |
 
 Preview is **not** isolated staging: it shares the canonical Supabase project. Only
 synthetic data may be used there. A true staging tier needs a separate backend
@@ -55,13 +55,13 @@ redacts credential and PII keys (email, names, tokens, passwords, DOB).
 
 ## Access and ownership inventory
 
-| Asset | Identifier | Owner | Access control |
-|---|---|---|---|
-| Lovable project | `a31643c5-8b7d-494c-bb54-740f76a83d78` | BFM founder | Lovable workspace members |
-| GitHub repo | `chiynagranderson57-coder/iq360-recruit-hub` (`main`) | chiynagranderson57-coder | GitHub collaborators |
-| Supabase project | `lqthjvzjkbwtggrhgpts` | BFM founder | Supabase org members; RLS for app users |
-| Secrets | Lovable Secrets / GitHub Actions secrets | BFM founder | Admins only |
-| Publishing | Lovable Publish | BFM founder | Founder action only |
+| Asset            | Identifier                                            | Owner                    | Access control                          |
+| ---------------- | ----------------------------------------------------- | ------------------------ | --------------------------------------- |
+| Lovable project  | `a31643c5-8b7d-494c-bb54-740f76a83d78`                | BFM founder              | Lovable workspace members               |
+| GitHub repo      | `chiynagranderson57-coder/iq360-recruit-hub` (`main`) | chiynagranderson57-coder | GitHub collaborators                    |
+| Supabase project | `lqthjvzjkbwtggrhgpts`                                | BFM founder              | Supabase org members; RLS for app users |
+| Secrets          | Lovable Secrets / GitHub Actions secrets              | BFM founder              | Admins only                             |
+| Publishing       | Lovable Publish                                       | BFM founder              | Founder action only                     |
 
 ## Open SRIQ-1 blockers (founder action)
 
