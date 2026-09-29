@@ -67,8 +67,8 @@ export function buildPrincipal(
   const active = accessRows.filter(
     (r) => r.user_id === userId && r.status === "active" && ROLE_MAP[r.access_role],
   );
-  if (active.length === 0) return null;
-  const role = ROLE_MAP[active[0].access_role];
+  const role = active[0] ? ROLE_MAP[active[0].access_role] : undefined;
+  if (!role) return null;
   const linked = active.filter((r) => ROLE_MAP[r.access_role] === role).map((r) => r.athlete_id);
   const consented = consentRows
     .filter((c) => c.guardian_user_id === userId && consentState(c) === "active")
