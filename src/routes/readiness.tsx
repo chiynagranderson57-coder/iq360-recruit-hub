@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { ReadinessPanel } from "@/components/athlete-data";
 import { AppShell } from "@/components/app-shell";
 import { GuardrailNote, ScopePanel } from "@/components/scope-panel";
 
@@ -29,6 +30,7 @@ function ReadinessPage() {
       title="Readiness snapshot"
       description="A transparent completeness and preparation view, recalculated as the record changes and always explainable."
     >
+      <ReadinessPanel />
       <div className="grid gap-4 lg:grid-cols-2">
         <ScopePanel
           title="What the snapshot shows"

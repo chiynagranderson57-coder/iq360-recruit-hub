@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { GuardianConsentPanel } from "@/components/athlete-data";
 import { AppShell } from "@/components/app-shell";
 import { GuardrailNote, ScopePanel } from "@/components/scope-panel";
 
@@ -29,6 +30,7 @@ function GuardianPage() {
       title="Guardian & consent"
       description="Guardian access exists only while an explicit consent grant is active, and it ends the moment consent is revoked."
     >
+      <GuardianConsentPanel />
       <div className="grid gap-4 lg:grid-cols-2">
         <ScopePanel
           title="Consent lifecycle"

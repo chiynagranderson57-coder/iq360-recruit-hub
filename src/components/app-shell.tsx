@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { NAV_CAPABILITIES } from "@/lib/capabilities";
 import { Badge } from "@/components/ui/badge";
+import { useSession } from "@/hooks/use-session";
 
 interface AppShellProps {
   eyebrow?: string;
@@ -39,6 +40,12 @@ export function AppShell({ eyebrow, title, description, children }: AppShellProp
                 {shortLabel(capability.name)}
               </Link>
             ))}
+            <Link
+              to="/auth"
+              className="shrink-0 rounded-md border border-border px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+            >
+              <SessionLabel />
+            </Link>
           </nav>
         </div>
       </header>
@@ -76,3 +83,7 @@ function shortLabel(name: string) {
   return base.replace("Resource", "Library").replace("My Plan", "Plan");
 }
 
+function SessionLabel() {
+  const session = useSession();
+  return <>{session ? "Account" : "Sign in"}</>;
+}

@@ -49,8 +49,8 @@ function DiscoveryPage() {
           ]}
           footer={
             <GuardrailNote>
-              Appearing in discovery means an opportunity exists publicly. It does not mean a program
-              is recruiting this athlete.
+              Appearing in discovery means an opportunity exists publicly. It does not mean a
+              program is recruiting this athlete.
             </GuardrailNote>
           }
         />
