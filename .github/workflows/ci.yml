@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      # Public, client-safe values only (also committed in .env). No secrets.
+      VITE_SUPABASE_URL: https://lqthjvzjkbwtggrhgpts.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_zsjgiZnFjRizHmBKTe71yA_e8egvFnj
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Lint
+        run: bun run lint
+      - name: Typecheck
+        run: bunx tsc --noEmit
+      - name: Tests (real-database checks auto-skip without synthetic secrets)
+        run: bun run test
+      - name: Build
+        run: bun run build
+      - name: Supabase health (read-only)
+        run: bun run check:supabase
+      - name: No secrets in client bundle
+        run: "! grep -rEl 'sb_secret_[A-Za-z0-9_-]{16,}' .output dist 2>/dev/null"

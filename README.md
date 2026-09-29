@@ -75,3 +75,9 @@ npm run dev
 
 Foundation scaffold only. Not deployed to production. No authentication,
 persistence, storage, or AI calls are wired yet.
+
+## Operations
+
+Environments, CI, secrets, feature flags, logging, promotion/rollback and the
+access/ownership inventory are documented in [`docs/OPERATIONS.md`](docs/OPERATIONS.md).
+Staging does not exist yet; production is published only by the founder.
