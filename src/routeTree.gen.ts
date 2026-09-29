@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GuardianRouteImport } from './routes/guardian'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as RecordRouteImport } from './routes/record'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuardianRoute = GuardianRouteImport.update({
+  id: '/guardian',
+  path: '/guardian',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IntakeRoute = IntakeRouteImport.update({
@@ -31,30 +37,34 @@ const RecordRoute = RecordRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/guardian': typeof GuardianRoute
   '/intake': typeof IntakeRoute
   '/record': typeof RecordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/guardian': typeof GuardianRoute
   '/intake': typeof IntakeRoute
   '/record': typeof RecordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/guardian': typeof GuardianRoute
   '/intake': typeof IntakeRoute
   '/record': typeof RecordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/intake' | '/record'
+  fullPaths: '/' | '/guardian' | '/intake' | '/record'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/intake' | '/record'
-  id: '__root__' | '/' | '/intake' | '/record'
+  to: '/' | '/guardian' | '/intake' | '/record'
+  id: '__root__' | '/' | '/guardian' | '/intake' | '/record'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GuardianRoute: typeof GuardianRoute
   IntakeRoute: typeof IntakeRoute
   RecordRoute: typeof RecordRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guardian': {
+      id: '/guardian'
+      path: '/guardian'
+      fullPath: '/guardian'
+      preLoaderRoute: typeof GuardianRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/intake': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GuardianRoute: GuardianRoute,
   IntakeRoute: IntakeRoute,
   RecordRoute: RecordRoute,
 }
