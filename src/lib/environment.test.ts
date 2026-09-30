@@ -7,10 +7,16 @@ const url = (ref: string) => `https://${ref}.supabase.co`;
 describe("environment model", () => {
   it("production must use the production ref", () => {
     expect(
-      checkEnvironment({ VITE_APP_ENV: "production", VITE_SUPABASE_URL: url(SUPABASE_REFS.production) }),
+      checkEnvironment({
+        VITE_APP_ENV: "production",
+        VITE_SUPABASE_URL: url(SUPABASE_REFS.production),
+      }),
     ).toMatchObject({ ok: true, backend: "production" });
     expect(
-      checkEnvironment({ VITE_APP_ENV: "production", VITE_SUPABASE_URL: url(SUPABASE_REFS.staging) }),
+      checkEnvironment({
+        VITE_APP_ENV: "production",
+        VITE_SUPABASE_URL: url(SUPABASE_REFS.staging),
+      }),
     ).toMatchObject({ ok: false, reason: "env_backend_mismatch:production->staging" });
   });
   it("staging must use the staging ref", () => {
@@ -18,7 +24,10 @@ describe("environment model", () => {
       checkEnvironment({ VITE_APP_ENV: "staging", VITE_SUPABASE_URL: url(SUPABASE_REFS.staging) }),
     ).toMatchObject({ ok: true, backend: "staging" });
     expect(
-      checkEnvironment({ VITE_APP_ENV: "staging", VITE_SUPABASE_URL: url(SUPABASE_REFS.production) }),
+      checkEnvironment({
+        VITE_APP_ENV: "staging",
+        VITE_SUPABASE_URL: url(SUPABASE_REFS.production),
+      }),
     ).toMatchObject({ ok: false });
   });
   it("defaults to development and rejects unknown projects", () => {
