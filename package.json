@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "check:supabase": "bun scripts/check-supabase.ts",
+    "check:supabase:staging": "bun --env-file=.env.staging scripts/check-supabase.ts",
     "test": "vitest run"
   },
   "overrides": {

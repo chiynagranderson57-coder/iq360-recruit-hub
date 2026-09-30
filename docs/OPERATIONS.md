@@ -6,12 +6,29 @@
 | --------------------- | --------------------------------------------------------- | ------------------- | ---------------------------------------- | -------------------------------- |
 | Local development     | Developer machine / Lovable sandbox (`bun run dev`)       | localhost           | `lqthjvzjkbwtggrhgpts` (publishable key) | Active                           |
 | Preview (pre-release) | Lovable preview URL `id-preview--a31643c5-...lovable.app` | latest editor build | `lqthjvzjkbwtggrhgpts`                   | Active, not public               |
-| Staging               | —                                                         | —                   | —                                        | **Does not exist.** See blockers |
+| Staging               | Not yet bound (see blockers)                              | —                   | `kpatqovdotkkgvpvgccg` (Supabase branch) | Backend exists; frontend unbound |
 | Production            | Lovable publish (not yet published)                       | —                   | `lqthjvzjkbwtggrhgpts`                   | **Not deployed**                 |
 
-Preview is **not** isolated staging: it shares the canonical Supabase project. Only
-synthetic data may be used there. A true staging tier needs a separate backend
-(Supabase branch or project) — a founder decision with possible plan cost.
+Preview is **not** isolated staging until its env vars are pointed at the staging
+branch; today it shares production. Only synthetic data may be used there.
+
+### Environment variables
+
+| Variable                        | Production                                 | Staging                                    |
+| ------------------------------- | ------------------------------------------ | ------------------------------------------ |
+| `VITE_APP_ENV`                  | `production`                               | `staging`                                  |
+| `VITE_SUPABASE_URL`             | `https://lqthjvzjkbwtggrhgpts.supabase.co` | `https://kpatqovdotkkgvpvgccg.supabase.co` |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | production publishable                     | staging-branch publishable                 |
+
+`src/lib/environment.ts` rejects a declared `staging`/`production` env whose URL
+points at the other project. Unset `VITE_APP_ENV` = `development` (either backend).
+Templates: `.env.example` (production), `.env.staging.example` (staging; copy to
+git-ignored `.env.staging`).
+
+### Staging health check (read-only)
+
+`bun run check:supabase:staging` — verifies env/ref match, refuses secret keys,
+then GETs `/auth/v1/health` on the staging branch. No writes.
 
 ## Configuration and secrets
 
@@ -65,7 +82,8 @@ redacts credential and PII keys (email, names, tokens, passwords, DOB).
 
 ## Open SRIQ-1 blockers (founder action)
 
-1. **Staging** — decide on a separate backend (Supabase branch/project) and a staging
-   frontend; requires founder authorization and possibly a paid plan.
+1. **Staging binding** — staging branch `kpatqovdotkkgvpvgccg` exists. Founder must
+   supply its publishable key and bind a staging frontend to it (see above); the
+   Lovable preview currently has one env set, bound to production.
 2. **CI activation** — confirm GitHub Actions is enabled on the repo and the workflow ran green.
 3. **Branch protection** — require the CI check on `main` in GitHub settings.
