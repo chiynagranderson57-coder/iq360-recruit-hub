@@ -80,4 +80,4 @@ persistence, storage, or AI calls are wired yet.
 
 Environments, CI, secrets, feature flags, logging, promotion/rollback and the
 access/ownership inventory are documented in [`docs/OPERATIONS.md`](docs/OPERATIONS.md).
-Staging does not exist yet; production is published only by the founder.
+Staging backend: Supabase branch `kpatqovdotkkgvpvgccg` (frontend binding pending). Production is published only by the founder.

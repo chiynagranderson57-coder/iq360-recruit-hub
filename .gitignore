@@ -30,3 +30,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment overrides (staging key etc.)
+.env.staging
+.env.*.local
