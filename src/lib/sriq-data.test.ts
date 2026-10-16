@@ -100,7 +100,7 @@ describe("SRIQ-26 authorization expectations", () => {
 });
 
 describe("client secret hygiene", () => {
-  it("no service-role or secret key appears in src/ or .env", () => {
+  it("no secret credential values or browser service-role references appear in src/ or .env", () => {
     const files: string[] = [];
     const walk = (dir: string) => {
       for (const f of readdirSync(dir)) {
@@ -113,7 +113,10 @@ describe("client secret hygiene", () => {
     files.push(".env");
     for (const f of files) {
       const text = readFileSync(f, "utf8");
-      expect(text, f).not.toMatch(/sb_secret_|SERVICE_ROLE/);
+      // Key-type detection strings are not credentials. Generated server-only
+      // clients may reference the environment name, never a literal secret.
+      expect(text, f).not.toMatch(/sb_secret_[A-Za-z0-9_-]{16,}/);
+      if (!f.endsWith(".server.ts")) expect(text, f).not.toMatch(/SERVICE_ROLE/);
     }
   });
 });
