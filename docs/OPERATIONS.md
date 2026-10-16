@@ -32,6 +32,17 @@ then GETs `/auth/v1/health` on the staging branch. No writes.
 
 ## Configuration and secrets
 
+### Original backend restored after Cloud enablement
+
+Cloud remains enabled but unused for athlete data. Its generated `.env` is managed
+by Lovable and must not be edited. `resolveAppBackend` in `src/lib/environment.ts`
+maps that known Cloud binding to the original external production URL and its
+public publishable key. Sign-in and all athlete/guardian reads use this resolved
+configuration through `src/lib/supabase.ts`; the existing external RLS remains
+authoritative. The health check uses the same resolver. Explicit external staging
+or production environment values remain supported, and staging mismatches fail
+closed. No data, schema, or authorization policies are copied into Cloud.
+
 - Client config: only `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`,
   `VITE_LOG_LEVEL`, `VITE_FLAG_*`. See `.env.example`. These ship to browsers.
 - Secrets (service-role / `sb_secret_` keys, DB passwords, E2E test passwords) live

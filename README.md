@@ -44,7 +44,7 @@ is the source of truth and maps each one to its route.
 - No fabricated recruiting claims, predictions, offers, or rankings anywhere in the product.
 - AI output always discloses uncertainty and its basis.
 
-## Backend binding (intended, not yet connected)
+## Backend binding
 
 Canonical product data lives in an **existing external Supabase project**:
 
@@ -52,9 +52,11 @@ Canonical product data lives in an **existing external Supabase project**:
 Supabase project ref: lqthjvzjkbwtggrhgpts
 ```
 
-No new database is provisioned by this repository, and no canonical data is
-stored in it yet. Binding happens explicitly after project creation and
-source-control verification.
+The app signs in and reads athlete, guardian-consent and readiness data from
+this original backend, under its existing row-level access policies. Lovable
+Cloud is enabled but unused for canonical data. The shared public configuration
+resolver preserves this connection even when Cloud manages `.env`; no data or
+schema is moved. See Operations for explicit staging configuration.
 
 Secrets are never committed here. Credentials (`SUPABASE_URL`,
 `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and the `VITE_`
