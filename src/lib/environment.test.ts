@@ -1,10 +1,36 @@
 import { describe, expect, it } from "vitest";
 
-import { checkEnvironment, SUPABASE_REFS } from "./environment";
+import { checkEnvironment, resolveAppBackend, SUPABASE_REFS } from "./environment";
 
 const url = (ref: string) => `https://${ref}.supabase.co`;
 
 describe("environment model", () => {
+  it("keeps canonical athlete data on the original backend when Cloud manages env", () => {
+    expect(resolveAppBackend({
+      VITE_SUPABASE_URL: url("lawauyvwyqvprtzrejbl"),
+      VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_cloud",
+    })).toMatchObject({
+      url: "https://lqthjvzjkbwtggrhgpts.supabase.co",
+      publishableKey: "sb_publishable_zsjgiZnFjRizHmBKTe71yA_e8egvFnj",
+    });
+  });
+  it("preserves explicit staging and never silently routes staging to production", () => {
+    expect(resolveAppBackend({
+      VITE_APP_ENV: "staging",
+      VITE_SUPABASE_URL: url(SUPABASE_REFS.staging),
+      VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_staging",
+    }).url).toBe("https://kpatqovdotkkgvpvgccg.supabase.co");
+    expect(() => resolveAppBackend({
+      VITE_APP_ENV: "staging",
+      VITE_SUPABASE_URL: url("lawauyvwyqvprtzrejbl"),
+    })).toThrow("env_backend_mismatch:staging->production");
+  });
+  it("rejects privileged keys", () => {
+    expect(() => resolveAppBackend({
+      VITE_SUPABASE_URL: url(SUPABASE_REFS.production),
+      VITE_SUPABASE_PUBLISHABLE_KEY: "sb_secret_forbidden",
+    })).toThrow("requires a public publishable key");
+  });
   it("production must use the production ref", () => {
     expect(
       checkEnvironment({
