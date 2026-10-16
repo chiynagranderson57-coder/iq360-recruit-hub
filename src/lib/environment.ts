@@ -14,17 +14,22 @@ const CANONICAL_PUBLISHABLE_KEY = "sb_publishable_zsjgiZnFjRizHmBKTe71yA_e8egvFn
 
 export function resolveAppBackend(env: Record<string, string | boolean | undefined>) {
   const managedRef = supabaseRefFromUrl(env["VITE_SUPABASE_URL"] as string | undefined);
-  const appEnv = managedRef === CLOUD_REF
-    ? {
-        ...env,
-        VITE_SUPABASE_URL: `https://${SUPABASE_REFS.production}.supabase.co`,
-        VITE_SUPABASE_PUBLISHABLE_KEY: CANONICAL_PUBLISHABLE_KEY,
-      }
-    : env;
+  const appEnv =
+    managedRef === CLOUD_REF
+      ? {
+          ...env,
+          VITE_SUPABASE_URL: `https://${SUPABASE_REFS.production}.supabase.co`,
+          VITE_SUPABASE_PUBLISHABLE_KEY: CANONICAL_PUBLISHABLE_KEY,
+        }
+      : env;
   const check = checkEnvironment(appEnv);
   if (!check.ok) throw new Error(`Invalid application backend: ${check.reason}`);
   const publishableKey = appEnv["VITE_SUPABASE_PUBLISHABLE_KEY"];
-  if (typeof publishableKey !== "string" || !publishableKey || /^sb_secret_|service_role/.test(publishableKey)) {
+  if (
+    typeof publishableKey !== "string" ||
+    !publishableKey ||
+    /^sb_secret_|service_role/.test(publishableKey)
+  ) {
     throw new Error("Application backend requires a public publishable key");
   }
   return { url: String(appEnv["VITE_SUPABASE_URL"]), publishableKey, check };
