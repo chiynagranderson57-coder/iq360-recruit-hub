@@ -68,9 +68,9 @@ describe("canonical app authentication (mocked, no live accounts)", () => {
   it.each(["", "Basic synthetic", "Bearer ", "Bearer invalid"])(
     "rejects absent or malformed bearer %s without contacting auth",
     async (authorization) => {
-      await expect(
-        verifyAppBearerToken(new Headers({ authorization }), env),
-      ).rejects.toThrow("Unauthorized");
+      await expect(verifyAppBearerToken(new Headers({ authorization }), env)).rejects.toThrow(
+        "Unauthorized",
+      );
       expect(mocks.createClient).not.toHaveBeenCalled();
     },
   );
