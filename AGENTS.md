@@ -17,5 +17,6 @@
 - Canonical product data belongs to the external Supabase project `lqthjvzjkbwtggrhgpts`; never provision a second database for it, to keep one system of record.
 - Colors, fonts, and elevation come from tokens in `src/styles.css`; components must not hardcode color utilities so theming stays centralized.
 - Browser Supabase access goes through `src/lib/supabase.ts` and `resolveAppBackend`; preserve explicit external production/staging VITE_ configuration and map the managed Cloud binding to the canonical public configuration, so Cloud enablement cannot redirect athlete data and no secret reaches browser code.
+- App server-function authentication uses `attachAppAuth` and `requireAppAuth` from `src/lib/app-auth.ts`, sharing the browser's `resolveAppBackend` configuration; do not use generated Cloud auth middleware, because it validates a different backend's sessions. Apply verification only to protected functions so public SSR remains public.
 - Feature flags live in `src/lib/feature-flags.ts`, default OFF, and never gate authorization, so rollout toggles can't weaken access control.
 - App logging goes through `src/lib/logger.ts`, which redacts PII and credentials, so athlete data never lands in logs.
