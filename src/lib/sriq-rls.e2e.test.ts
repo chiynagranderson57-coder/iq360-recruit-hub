@@ -9,10 +9,10 @@
  */
 import { createClient } from "@supabase/supabase-js";
 import { describe, expect, it } from "vitest";
+import { resolveAppBackend } from "./environment";
 
 const env = (k: string) => process.env[k] ?? "";
-const URL = env("VITE_SUPABASE_URL") || "https://lqthjvzjkbwtggrhgpts.supabase.co";
-const KEY = env("VITE_SUPABASE_PUBLISHABLE_KEY");
+const { url: URL, publishableKey: KEY } = resolveAppBackend(process.env);
 const REQUIRED = [
   "SRIQ_E2E_ATHLETE_A_EMAIL",
   "SRIQ_E2E_ATHLETE_A_PASSWORD",
