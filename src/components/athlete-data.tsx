@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSession } from "@/hooks/use-session";
+import { accountQueryKeys } from "@/lib/session-cache";
 import {
   consentState,
   fetchAthletes,
@@ -28,7 +29,7 @@ function useAccess() {
   const session = useSession();
   const userId = session?.user.id;
   const access = useQuery({
-    queryKey: ["athlete_access", userId],
+    queryKey: accountQueryKeys.access(userId),
     queryFn: () => fetchMyAccess(userId!),
     enabled: !!userId,
   });
@@ -64,12 +65,12 @@ export function AthleteProfilePanel() {
 
 function AthleteProfileInner({ userId }: { userId: string }) {
   const access = useQuery({
-    queryKey: ["athlete_access", userId],
+    queryKey: accountQueryKeys.access(userId),
     queryFn: () => fetchMyAccess(userId),
   });
   const ids = (access.data ?? []).filter((r) => r.status === "active").map((r) => r.athlete_id);
   const athletes = useQuery({
-    queryKey: ["athletes", ids],
+    queryKey: accountQueryKeys.athletes(userId, ids),
     queryFn: () => fetchAthletes(ids),
     enabled: access.isSuccess,
   });
@@ -95,11 +96,14 @@ function AthleteProfileInner({ userId }: { userId: string }) {
 }
 
 export function GuardianConsentPanel() {
-  return <Gate title="Guardian consent">{() => <GuardianConsentInner />}</Gate>;
+  return <Gate title="Guardian consent">{(uid) => <GuardianConsentInner userId={uid} />}</Gate>;
 }
 
-function GuardianConsentInner() {
-  const consents = useQuery({ queryKey: ["guardian_consents"], queryFn: fetchConsents });
+function GuardianConsentInner({ userId }: { userId: string }) {
+  const consents = useQuery({
+    queryKey: accountQueryKeys.consents(userId),
+    queryFn: fetchConsents,
+  });
   return (
     <Frame title="Guardian consent">
       {consents.error ? <Err e={consents.error} /> : null}
@@ -135,12 +139,12 @@ export function ReadinessPanel() {
 
 function ReadinessInner({ userId }: { userId: string }) {
   const access = useQuery({
-    queryKey: ["athlete_access", userId],
+    queryKey: accountQueryKeys.access(userId),
     queryFn: () => fetchMyAccess(userId),
   });
   const ids = (access.data ?? []).filter((r) => r.status === "active").map((r) => r.athlete_id);
   const readiness = useQuery({
-    queryKey: ["athlete_readiness", ids],
+    queryKey: accountQueryKeys.readiness(userId, ids),
     queryFn: () => fetchReadiness(ids),
     enabled: access.isSuccess,
   });
