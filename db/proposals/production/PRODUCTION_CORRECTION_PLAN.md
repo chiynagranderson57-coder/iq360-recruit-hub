@@ -1,4 +1,5 @@
 # SRIQ360 Phase 2 — production correction plan for review
+
 Prepared November 1, 2026. **PLAN ONLY — nothing applied to production.**
 Status: reviewed; correction scope retained; execution remains HOLD. No authorization to execute, merge, publish, upgrade, or deploy.
 
@@ -19,23 +20,23 @@ Approve the correction scope below as the basis for a production-specific execut
 
 ## Verified current state
 
-| Surface | Observed state |
-| --- | --- |
-| Canonical production database | lqthjvzjkbwtggrhgpts; PostgreSQL 17.6; seven public tables owned by postgres, all with RLS enabled |
-| Staging database | kpatqovdotkkgvpvgccg; tested corrections applied; final security advisor has zero warnings |
-| Production advisor | Two warnings: signed-in execution of public.assign_role; leaked-password protection disabled |
-| Production athlete_access SELECT | Existing policy queries athlete_access again, retaining the known recursion defect |
-| Production readiness UPDATE | USING and WITH CHECK test a global coordinator role, without athlete-specific coordinator assignment |
-| Production table privileges | anon, authenticated, and service_role each have SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, and MAINTAIN on all seven public tables |
-| Production column grants | No explicit column grants observed |
-| Production function ACLs | assign_role has authenticated and service_role EXECUTE; bootstrap and signup-trigger functions have service_role EXECUTE; these differ from staging |
-| Production private schema | No USAGE for authenticated or anon; do not copy staging schema grants without proving need |
-| Production defaults | postgres and managed supabase_admin defaults remain broad; postgres public function defaults also grant client EXECUTE |
-| PR #1 | Open, unmerged; lovable-sync to main; head 033dc127a64b29cfc6bc093c1e031be5a553f5bd; CI run #10 success |
-| PR #2 | Draft, unmerged; account cache correction to lovable-sync; head 789808c8f2136ca5b6ea84229d120433fc2b3942; CI run #11 success |
-| CI test boundary | 34 unit tests passed for cache fix; four live database tests were skipped, not passed |
-| Lovable project | a31643c5-8b7d-494c-bb54-740f76a83d78; unpublished; reported latest commit a0555288c2c434add134a2cd8bfabb67b947aa3f, different from reviewed PR heads |
-| Backups/recovery | Production daily physical backup 2026-11-01 09:11:20 UTC (03:11:20 CST) is listed and its restore confirmation is accessible; confirmation was cancelled. Restore execution/integrity has not been tested. PITR is not enabled. |
+| Surface                          | Observed state                                                                                                                                                                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Canonical production database    | lqthjvzjkbwtggrhgpts; PostgreSQL 17.6; seven public tables owned by postgres, all with RLS enabled                                                                                                                              |
+| Staging database                 | kpatqovdotkkgvpvgccg; tested corrections applied; final security advisor has zero warnings                                                                                                                                      |
+| Production advisor               | Two warnings: signed-in execution of public.assign_role; leaked-password protection disabled                                                                                                                                    |
+| Production athlete_access SELECT | Existing policy queries athlete_access again, retaining the known recursion defect                                                                                                                                              |
+| Production readiness UPDATE      | USING and WITH CHECK test a global coordinator role, without athlete-specific coordinator assignment                                                                                                                            |
+| Production table privileges      | anon, authenticated, and service_role each have SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, and MAINTAIN on all seven public tables                                                                          |
+| Production column grants         | No explicit column grants observed                                                                                                                                                                                              |
+| Production function ACLs         | assign_role has authenticated and service_role EXECUTE; bootstrap and signup-trigger functions have service_role EXECUTE; these differ from staging                                                                             |
+| Production private schema        | No USAGE for authenticated or anon; do not copy staging schema grants without proving need                                                                                                                                      |
+| Production defaults              | postgres and managed supabase_admin defaults remain broad; postgres public function defaults also grant client EXECUTE                                                                                                          |
+| PR #1                            | Open, unmerged; lovable-sync to main; head 033dc127a64b29cfc6bc093c1e031be5a553f5bd; CI run #10 success                                                                                                                         |
+| PR #2                            | Draft, unmerged; account cache correction to lovable-sync; head 789808c8f2136ca5b6ea84229d120433fc2b3942; CI run #11 success                                                                                                    |
+| CI test boundary                 | 34 unit tests passed for cache fix; four live database tests were skipped, not passed                                                                                                                                           |
+| Lovable project                  | a31643c5-8b7d-494c-bb54-740f76a83d78; unpublished; reported latest commit a0555288c2c434add134a2cd8bfabb67b947aa3f, different from reviewed PR heads                                                                            |
+| Backups/recovery                 | Production daily physical backup 2026-11-01 09:11:20 UTC (03:11:20 CST) is listed and its restore confirmation is accessible; confirmation was cancelled. Restore execution/integrity has not been tested. PITR is not enabled. |
 
 Production was inspected through read-only SQL and security advisors. No production role impersonation, test write, password change, Auth setting change, or DDL was performed.
 
@@ -63,6 +64,7 @@ Point-in-Time Recovery is not enabled: its page offers Enable add-on. No add-on 
 Before production execution, recheck the newest available backup, refresh the pre-change metadata/configuration snapshot, name the recovery operator, and explicitly accept the possible post-backup data loss and unknown downtime window. Do not mark those remaining operational decisions complete merely because a Restore button is accessible. A backup restore is an emergency recovery option, not the routine rollback for this permission patch.
 
 Verified dashboard pages:
+
 - https://supabase.com/dashboard/project/lqthjvzjkbwtggrhgpts/database/backups/scheduled
 - https://supabase.com/dashboard/project/lqthjvzjkbwtggrhgpts/database/backups/pitr
 - Provider scope and recovery limits: https://supabase.com/docs/guides/platform/backups
@@ -109,19 +111,19 @@ Do not change user passwords, email verification, providers, OTP settings, sessi
 
 ## Required gates before executing any production change
 
-| Gate | Required evidence |
-| --- | --- |
-| Production-specific SQL | Prepared against the refreshed production catalog, with explicit project selection, expected-policy/helper checks, no staging fixture markers, no hardcoded new generated row IDs, drift rejection, lock/statement timeouts, atomic execution, and effective-privilege assertions |
-| Recovery | Confirm an accessible, current backup or supported restore point; record its timestamp, recovery scope, operator, and expected downtime. Capture pre-change policies, function definitions/ACLs, table/column/schema/default ACLs. A metadata snapshot alone is not a data backup. |
-| Rehearsal | Run the exact production-adapted SQL against an isolated model of production's broad table/default/function grants and lack of private schema USAGE. Reuse existing tests; add only the production-specific cases. Preserve service privileges. |
-| Role-delegation decision | Confirm loss of coordinator browser grants is intended and document a workable privileged role-management procedure preserving actor checks and auditing |
-| Auth/operator readiness | Confirm the authorized operator can access the production Auth settings and approved synthetic accounts can be used for read-only smoke tests without password resets |
-| Runtime inventory | Identify the actual deployed/serving application and production connection. Lovable is reported unpublished, so do not invent a live deployment or assume the reviewed GitHub head is serving users. |
+| Gate                                 | Required evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Production-specific SQL              | Prepared against the refreshed production catalog, with explicit project selection, expected-policy/helper checks, no staging fixture markers, no hardcoded new generated row IDs, drift rejection, lock/statement timeouts, atomic execution, and effective-privilege assertions                                                                                                                                                                                  |
+| Recovery                             | Confirm an accessible, current backup or supported restore point; record its timestamp, recovery scope, operator, and expected downtime. Capture pre-change policies, function definitions/ACLs, table/column/schema/default ACLs. A metadata snapshot alone is not a data backup.                                                                                                                                                                                 |
+| Rehearsal                            | Run the exact production-adapted SQL against an isolated model of production's broad table/default/function grants and lack of private schema USAGE. Reuse existing tests; add only the production-specific cases. Preserve service privileges.                                                                                                                                                                                                                    |
+| Role-delegation decision             | Confirm loss of coordinator browser grants is intended and document a workable privileged role-management procedure preserving actor checks and auditing                                                                                                                                                                                                                                                                                                           |
+| Auth/operator readiness              | Confirm the authorized operator can access the production Auth settings and approved synthetic accounts can be used for read-only smoke tests without password resets                                                                                                                                                                                                                                                                                              |
+| Runtime inventory                    | Identify the actual deployed/serving application and production connection. Lovable is reported unpublished, so do not invent a live deployment or assume the reviewed GitHub head is serving users.                                                                                                                                                                                                                                                               |
 | Synchronization and release ordering | Resolve or explain Lovable's different commit. Before restoring production data access, verify the serving artifact includes the cache fix and shared authentication/backend resolver, verify there is no active serving app, or approve a coordinated access hold until the compatible app and database are ready together. Do not assume an unpublished Lovable project proves no other app is serving. No deployment or access hold is authorized by this plan. |
-| Authorization path | Current UI requests rely on database RLS. decideAthleteAccess and requireAppAuth exist but have no non-test consumers in the reviewed app. Reconcile the AGENTS server-enforcement rule before claiming full application authorization compliance; unit tests alone do not close this gap. |
-| Explicit permission | Obtain approval of the final production-specific change package and execution scope. A merge, application deployment, engine upgrade, fixture creation, or recovery action requires its own applicable authorization. |
+| Authorization path                   | Current UI requests rely on database RLS. decideAthleteAccess and requireAppAuth exist but have no non-test consumers in the reviewed app. Reconcile the AGENTS server-enforcement rule before claiming full application authorization compliance; unit tests alone do not close this gap.                                                                                                                                                                         |
+| Explicit permission                  | Obtain approval of the final production-specific change package and execution scope. A merge, application deployment, engine upgrade, fixture creation, or recovery action requires its own applicable authorization.                                                                                                                                                                                                                                              |
 
-The existing staging SQL contains staging-account guards and expects a helper already present there. It is not a production script. No runnable production migration or production change has been issued by this plan.
+The existing staging SQL contains staging-account guards and expects a helper already present there. It is not a production script. A production-specific guarded draft is now prepared in [SQL_PACKAGE_REVIEW.md](./SQL_PACKAGE_REVIEW.md), with 305 isolated PostgreSQL 17.5 assertions passed against the refreshed production metadata. Production is PostgreSQL 17.6; the test model is not a hosted clone or real-JWT test. The draft fails without external project opt-in and must not be executed until every remaining gate and explicit authorization is satisfied. No production changes have been applied.
 
 ## Controlled execution sequence after those gates and authorization
 

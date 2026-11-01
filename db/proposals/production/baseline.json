@@ -1,0 +1,1004 @@
+{
+  "capturedOn": "2026-11-01",
+  "project": "lqthjvzjkbwtggrhgpts",
+  "scope": "Catalog metadata only; no user rows or credentials",
+  "enums": [
+    {
+      "labels": ["student_athlete", "parent_guardian", "recruitment_coordinator"],
+      "typname": "app_role"
+    },
+    {
+      "labels": ["student_athlete", "parent_guardian", "recruitment_coordinator"],
+      "typname": "athlete_access_role"
+    },
+    {
+      "labels": ["active", "archived"],
+      "typname": "record_status"
+    }
+  ],
+  "tables": [
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=arwdDxtm/postgres",
+        "authenticated=arwdDxtm/postgres",
+        "service_role=arwdDxtm/postgres"
+      ],
+      "rls": true,
+      "name": "athlete_access",
+      "owner": "postgres",
+      "columns": [
+        {
+          "acl": null,
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "athlete_id",
+          "type": "uuid",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "user_id",
+          "type": "uuid",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "access_role",
+          "type": "athlete_access_role",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "status",
+          "type": "record_status",
+          "default": "'active'::record_status",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        }
+      ],
+      "force_rls": false
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=arwdDxtm/postgres",
+        "authenticated=arwdDxtm/postgres",
+        "service_role=arwdDxtm/postgres"
+      ],
+      "rls": true,
+      "name": "athlete_readiness",
+      "owner": "postgres",
+      "columns": [
+        {
+          "acl": null,
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "athlete_id",
+          "type": "uuid",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "profile_complete",
+          "type": "boolean",
+          "default": "false",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "academics_complete",
+          "type": "boolean",
+          "default": "false",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "film_complete",
+          "type": "boolean",
+          "default": "false",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "recruiting_materials_complete",
+          "type": "boolean",
+          "default": "false",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "readiness_score",
+          "type": "integer",
+          "default": "(((\nCASE\n    WHEN profile_complete THEN 25\n    ELSE 0\nEND +\nCASE\n    WHEN academics_complete THEN 25\n    ELSE 0\nEND) +\nCASE\n    WHEN film_complete THEN 25\n    ELSE 0\nEND) +\nCASE\n    WHEN recruiting_materials_complete THEN 25\n    ELSE 0\nEND)",
+          "notnull": false,
+          "generated": "s"
+        },
+        {
+          "acl": null,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        }
+      ],
+      "force_rls": false
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=arwdDxtm/postgres",
+        "authenticated=arwdDxtm/postgres",
+        "service_role=arwdDxtm/postgres"
+      ],
+      "rls": true,
+      "name": "athletes",
+      "owner": "postgres",
+      "columns": [
+        {
+          "acl": null,
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "first_name",
+          "type": "text",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "last_name",
+          "type": "text",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "sport",
+          "type": "text",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "graduation_year",
+          "type": "integer",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "status",
+          "type": "record_status",
+          "default": "'active'::record_status",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        }
+      ],
+      "force_rls": false
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=arwdDxtm/postgres",
+        "authenticated=arwdDxtm/postgres",
+        "service_role=arwdDxtm/postgres"
+      ],
+      "rls": true,
+      "name": "audit_events",
+      "owner": "postgres",
+      "columns": [
+        {
+          "acl": null,
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "actor_user_id",
+          "type": "uuid",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "athlete_id",
+          "type": "uuid",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "event_type",
+          "type": "text",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "entity_type",
+          "type": "text",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "entity_id",
+          "type": "text",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "action",
+          "type": "text",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "source",
+          "type": "text",
+          "default": "'app'::text",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "correlation_id",
+          "type": "text",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "metadata",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        }
+      ],
+      "force_rls": false
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=arwdDxtm/postgres",
+        "authenticated=arwdDxtm/postgres",
+        "service_role=arwdDxtm/postgres"
+      ],
+      "rls": true,
+      "name": "guardian_consents",
+      "owner": "postgres",
+      "columns": [
+        {
+          "acl": null,
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "athlete_id",
+          "type": "uuid",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "guardian_user_id",
+          "type": "uuid",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "status",
+          "type": "text",
+          "default": "'active'::text",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "granted_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "revoked_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        }
+      ],
+      "force_rls": false
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=arwdDxtm/postgres",
+        "authenticated=arwdDxtm/postgres",
+        "service_role=arwdDxtm/postgres"
+      ],
+      "rls": true,
+      "name": "user_profiles",
+      "owner": "postgres",
+      "columns": [
+        {
+          "acl": null,
+          "name": "id",
+          "type": "uuid",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "email",
+          "type": "text",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "full_name",
+          "type": "text",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "status",
+          "type": "record_status",
+          "default": "'active'::record_status",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        }
+      ],
+      "force_rls": false
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=arwdDxtm/postgres",
+        "authenticated=arwdDxtm/postgres",
+        "service_role=arwdDxtm/postgres"
+      ],
+      "rls": true,
+      "name": "user_roles",
+      "owner": "postgres",
+      "columns": [
+        {
+          "acl": null,
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "user_id",
+          "type": "uuid",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "role",
+          "type": "app_role",
+          "default": null,
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "status",
+          "type": "record_status",
+          "default": "'active'::record_status",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notnull": true,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notnull": false,
+          "generated": ""
+        }
+      ],
+      "force_rls": false
+    }
+  ],
+  "schemas": [
+    {
+      "acl": null,
+      "name": "private",
+      "owner": "postgres"
+    },
+    {
+      "acl": [
+        "pg_database_owner=UC/pg_database_owner",
+        "=U/pg_database_owner",
+        "postgres=U/pg_database_owner",
+        "anon=U/pg_database_owner",
+        "authenticated=U/pg_database_owner",
+        "service_role=U/pg_database_owner"
+      ],
+      "name": "public",
+      "owner": "pg_database_owner"
+    }
+  ],
+  "version": "PostgreSQL 17.6 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 15.2.0, 64-bit",
+  "defaults": [
+    {
+      "acl": [
+        "postgres=rwU/postgres",
+        "anon=rwU/postgres",
+        "authenticated=rwU/postgres",
+        "service_role=rwU/postgres"
+      ],
+      "type": "S",
+      "owner": "postgres",
+      "schema": "public"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "anon=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "type": "f",
+      "owner": "postgres",
+      "schema": "public"
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=arwdDxtm/postgres",
+        "authenticated=arwdDxtm/postgres",
+        "service_role=arwdDxtm/postgres"
+      ],
+      "type": "r",
+      "owner": "postgres",
+      "schema": "public"
+    },
+    {
+      "acl": [
+        "postgres=rwU/supabase_admin",
+        "anon=rwU/supabase_admin",
+        "authenticated=rwU/supabase_admin",
+        "service_role=rwU/supabase_admin"
+      ],
+      "type": "S",
+      "owner": "supabase_admin",
+      "schema": "public"
+    },
+    {
+      "acl": [
+        "postgres=X/supabase_admin",
+        "anon=X/supabase_admin",
+        "authenticated=X/supabase_admin",
+        "service_role=X/supabase_admin"
+      ],
+      "type": "f",
+      "owner": "supabase_admin",
+      "schema": "public"
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/supabase_admin",
+        "anon=arwdDxtm/supabase_admin",
+        "authenticated=arwdDxtm/supabase_admin",
+        "service_role=arwdDxtm/supabase_admin"
+      ],
+      "type": "r",
+      "owner": "supabase_admin",
+      "schema": "public"
+    }
+  ],
+  "policies": [
+    {
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = user_id) OR (EXISTS ( SELECT 1\n   FROM athlete_access mine\n  WHERE ((mine.athlete_id = athlete_access.athlete_id) AND (mine.user_id = auth.uid()) AND (mine.access_role = 'recruitment_coordinator'::athlete_access_role) AND (mine.status = 'active'::record_status)))))",
+      "roles": ["public"],
+      "tablename": "athlete_access",
+      "permissive": "PERMISSIVE",
+      "policyname": "athlete_access_select_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "private.has_athlete_access(athlete_id)",
+      "roles": ["authenticated"],
+      "tablename": "athlete_readiness",
+      "permissive": "PERMISSIVE",
+      "policyname": "athlete_readiness_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "private.is_recruitment_coordinator()",
+      "roles": ["authenticated"],
+      "tablename": "athlete_readiness",
+      "permissive": "PERMISSIVE",
+      "policyname": "athlete_readiness_update_coordinator",
+      "schemaname": "public",
+      "with_check": "private.is_recruitment_coordinator()"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "private.has_athlete_access(id)",
+      "roles": ["public"],
+      "tablename": "athletes",
+      "permissive": "PERMISSIVE",
+      "policyname": "athletes_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM athlete_access aa\n  WHERE ((aa.athlete_id = athletes.id) AND (aa.user_id = auth.uid()) AND (aa.access_role = 'recruitment_coordinator'::athlete_access_role) AND (aa.status = 'active'::record_status))))",
+      "roles": ["public"],
+      "tablename": "athletes",
+      "permissive": "PERMISSIVE",
+      "policyname": "athletes_update_scoped",
+      "schemaname": "public",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM athlete_access aa\n  WHERE ((aa.athlete_id = athletes.id) AND (aa.user_id = auth.uid()) AND (aa.access_role = 'recruitment_coordinator'::athlete_access_role) AND (aa.status = 'active'::record_status))))"
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": ["public"],
+      "tablename": "audit_events",
+      "permissive": "PERMISSIVE",
+      "policyname": "audit_events_insert_self",
+      "schemaname": "public",
+      "with_check": "(auth.uid() = actor_user_id)"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = actor_user_id) OR ((athlete_id IS NOT NULL) AND private.has_athlete_access(athlete_id)))",
+      "roles": ["public"],
+      "tablename": "audit_events",
+      "permissive": "PERMISSIVE",
+      "policyname": "audit_events_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((guardian_user_id = ( SELECT auth.uid() AS uid)) OR private.has_athlete_access(athlete_id))",
+      "roles": ["authenticated"],
+      "tablename": "guardian_consents",
+      "permissive": "PERMISSIVE",
+      "policyname": "guardian_consents_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": ["public"],
+      "tablename": "user_profiles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_profiles_insert_own",
+      "schemaname": "public",
+      "with_check": "(auth.uid() = id)"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = id)",
+      "roles": ["public"],
+      "tablename": "user_profiles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_profiles_select_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = id)",
+      "roles": ["public"],
+      "tablename": "user_profiles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_profiles_update_own",
+      "schemaname": "public",
+      "with_check": "(auth.uid() = id)"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = user_id) OR private.is_recruitment_coordinator())",
+      "roles": ["public"],
+      "tablename": "user_roles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_roles_select_own",
+      "schemaname": "public",
+      "with_check": null
+    }
+  ],
+  "triggers": [
+    {
+      "name": "trg_athlete_access_updated_at",
+      "table": "athlete_access",
+      "definition": "CREATE TRIGGER trg_athlete_access_updated_at BEFORE UPDATE ON public.athlete_access FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+    },
+    {
+      "name": "trg_athletes_updated_at",
+      "table": "athletes",
+      "definition": "CREATE TRIGGER trg_athletes_updated_at BEFORE UPDATE ON public.athletes FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+    },
+    {
+      "name": "trg_user_profiles_updated_at",
+      "table": "user_profiles",
+      "definition": "CREATE TRIGGER trg_user_profiles_updated_at BEFORE UPDATE ON public.user_profiles FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+    },
+    {
+      "name": "trg_user_roles_updated_at",
+      "table": "user_roles",
+      "definition": "CREATE TRIGGER trg_user_roles_updated_at BEFORE UPDATE ON public.user_roles FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+    }
+  ],
+  "functions": [
+    {
+      "acl": ["postgres=X/postgres", "authenticated=X/postgres"],
+      "args": "uuid",
+      "name": "has_athlete_access",
+      "owner": "postgres",
+      "schema": "private",
+      "definition": "CREATE OR REPLACE FUNCTION private.has_athlete_access(p_athlete_id uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1 from public.athlete_access aa\n    where aa.athlete_id = p_athlete_id\n      and aa.user_id = auth.uid()\n      and aa.status = 'active'\n      and (\n        aa.access_role <> 'parent_guardian'\n        or exists (\n          select 1 from public.guardian_consents gc\n          where gc.athlete_id = p_athlete_id\n            and gc.guardian_user_id = auth.uid()\n            and gc.status = 'active'\n            and gc.revoked_at is null\n        )\n      )\n  );\n$function$\n"
+    },
+    {
+      "acl": ["postgres=X/postgres", "authenticated=X/postgres"],
+      "args": "",
+      "name": "is_recruitment_coordinator",
+      "owner": "postgres",
+      "schema": "private",
+      "definition": "CREATE OR REPLACE FUNCTION private.is_recruitment_coordinator()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1\n    from public.user_roles ur\n    where ur.user_id = auth.uid()\n      and ur.role = 'recruitment_coordinator'\n      and ur.status = 'active'\n  );\n$function$\n"
+    },
+    {
+      "acl": ["postgres=X/postgres", "authenticated=X/postgres", "service_role=X/postgres"],
+      "args": "uuid, app_role",
+      "name": "assign_role",
+      "owner": "postgres",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.assign_role(p_user_id uuid, p_role app_role)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n  if not private.is_recruitment_coordinator() then\n    raise exception 'not_authorized'\n      using detail = 'Only an active recruitment coordinator may assign roles.';\n  end if;\n\n  if not exists (select 1 from auth.users where id = p_user_id) then\n    raise exception 'unknown_user' using detail = 'No auth user with the given id.';\n  end if;\n\n  insert into public.user_roles (user_id, role, status, created_by)\n  values (p_user_id, p_role, 'active', auth.uid())\n  on conflict (user_id, role) do update\n    set status = 'active', updated_at = now();\n\n  insert into public.audit_events\n    (actor_user_id, event_type, entity_type, entity_id, action, source, metadata)\n  values\n    (auth.uid(), 'role.assigned', 'user_role', p_user_id::text, 'grant', 'app',\n     jsonb_build_object('role', p_role, 'target_user_id', p_user_id));\n\n  return p_user_id;\nend;\n$function$\n"
+    },
+    {
+      "acl": ["postgres=X/postgres", "service_role=X/postgres"],
+      "args": "uuid",
+      "name": "bootstrap_initial_coordinator",
+      "owner": "postgres",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.bootstrap_initial_coordinator(p_user_id uuid)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_existing int;\nbegin\n  -- One-time guard: only permitted while NO active coordinator exists.\n  select count(*) into v_existing\n  from public.user_roles\n  where role = 'recruitment_coordinator' and status = 'active';\n\n  if v_existing > 0 then\n    raise exception 'bootstrap_already_completed'\n      using detail = 'An active recruitment coordinator already exists; use assign_role instead.';\n  end if;\n\n  -- Target must be a real, existing auth user (identified by ID, not name).\n  if not exists (select 1 from auth.users where id = p_user_id) then\n    raise exception 'unknown_user' using detail = 'No auth user with the given id.';\n  end if;\n\n  insert into public.user_roles (user_id, role, status, created_by)\n  values (p_user_id, 'recruitment_coordinator', 'active', p_user_id)\n  on conflict (user_id, role) do update\n    set status = 'active', updated_at = now();\n\n  insert into public.audit_events\n    (actor_user_id, event_type, entity_type, entity_id, action, source, metadata)\n  values\n    (p_user_id, 'role.bootstrapped', 'user_role', p_user_id::text, 'grant', 'system',\n     jsonb_build_object('role', 'recruitment_coordinator', 'reason', 'initial_coordinator_bootstrap'));\n\n  return p_user_id;\nend;\n$function$\n"
+    },
+    {
+      "acl": ["postgres=X/postgres", "service_role=X/postgres"],
+      "args": "",
+      "name": "handle_new_user",
+      "owner": "postgres",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.handle_new_user()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n  insert into public.user_profiles (id, email, full_name)\n  values (\n    new.id,\n    new.email,\n    coalesce(new.raw_user_meta_data ->> 'full_name', null)\n  )\n  on conflict (id) do nothing;\n  return new;\nend;\n$function$\n"
+    },
+    {
+      "acl": [
+        "=X/postgres",
+        "postgres=X/postgres",
+        "anon=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "args": "",
+      "name": "set_updated_at",
+      "owner": "postgres",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.set_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nbegin\n  new.updated_at = now();\n  return new;\nend;\n$function$\n"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "athlete_access_athlete_id_fkey",
+      "table": "athlete_access",
+      "definition": "FOREIGN KEY (athlete_id) REFERENCES athletes(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "athlete_access_athlete_id_user_id_key",
+      "table": "athlete_access",
+      "definition": "UNIQUE (athlete_id, user_id)"
+    },
+    {
+      "name": "athlete_access_created_by_fkey",
+      "table": "athlete_access",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "athlete_access_pkey",
+      "table": "athlete_access",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "athlete_access_user_id_fkey",
+      "table": "athlete_access",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "athlete_readiness_athlete_id_fkey",
+      "table": "athlete_readiness",
+      "definition": "FOREIGN KEY (athlete_id) REFERENCES athletes(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "athlete_readiness_athlete_id_key",
+      "table": "athlete_readiness",
+      "definition": "UNIQUE (athlete_id)"
+    },
+    {
+      "name": "athlete_readiness_pkey",
+      "table": "athlete_readiness",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "athletes_created_by_fkey",
+      "table": "athletes",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "athletes_graduation_year_check",
+      "table": "athletes",
+      "definition": "CHECK (((graduation_year IS NULL) OR ((graduation_year >= 1990) AND (graduation_year <= 2100))))"
+    },
+    {
+      "name": "athletes_pkey",
+      "table": "athletes",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "audit_events_actor_user_id_fkey",
+      "table": "audit_events",
+      "definition": "FOREIGN KEY (actor_user_id) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "audit_events_athlete_id_fkey",
+      "table": "audit_events",
+      "definition": "FOREIGN KEY (athlete_id) REFERENCES athletes(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "audit_events_pkey",
+      "table": "audit_events",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "guardian_consents_athlete_id_fkey",
+      "table": "guardian_consents",
+      "definition": "FOREIGN KEY (athlete_id) REFERENCES athletes(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "guardian_consents_athlete_id_guardian_user_id_key",
+      "table": "guardian_consents",
+      "definition": "UNIQUE (athlete_id, guardian_user_id)"
+    },
+    {
+      "name": "guardian_consents_created_by_fkey",
+      "table": "guardian_consents",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id)"
+    },
+    {
+      "name": "guardian_consents_guardian_user_id_fkey",
+      "table": "guardian_consents",
+      "definition": "FOREIGN KEY (guardian_user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "guardian_consents_pkey",
+      "table": "guardian_consents",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "guardian_consents_status_check",
+      "table": "guardian_consents",
+      "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'revoked'::text])))"
+    },
+    {
+      "name": "user_profiles_id_fkey",
+      "table": "user_profiles",
+      "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "user_profiles_pkey",
+      "table": "user_profiles",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "user_roles_created_by_fkey",
+      "table": "user_roles",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "user_roles_pkey",
+      "table": "user_roles",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "user_roles_user_id_fkey",
+      "table": "user_roles",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "user_roles_user_id_role_key",
+      "table": "user_roles",
+      "definition": "UNIQUE (user_id, role)"
+    }
+  ],
+  "client_role_memberships": null
+}
