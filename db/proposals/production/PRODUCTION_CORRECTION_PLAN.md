@@ -11,7 +11,7 @@ Two planning defects were corrected in this review:
 1. **Release ordering:** repairing production recursion could restore data access while a serving application still lacks the account-cache privacy fix. The rollout gate and sequence now require a verified compatible serving artifact, a verified absence of an active serving application, or a separately approved coordinated access hold until both changes are ready. A future intention to integrate PR #2 is insufficient.
 2. **Partial completion:** database restrictions and the Auth setting are separate operations. If one completes and the other fails, record the exact partial state, stop, preserve completed protective changes, and obtain review of the remaining action. Never automatically restore unsafe permissions or disable protections.
 
-Unresolved execution prerequisites remain: a verified recovery point, production-adapted guarded SQL and rehearsal, role-delegation workflow confirmation, actual runtime/synchronization evidence, and the authorization-path disposition. These are prerequisites, not findings that the database corrections have already failed.
+Unresolved execution prerequisites remain: acceptance of the recovery data-loss/downtime window and a named recovery operator, production-adapted guarded SQL and rehearsal, role-delegation workflow confirmation, actual runtime/synchronization evidence, and the authorization-path disposition. These are prerequisites, not findings that the database corrections have already failed.
 
 ## Decision requested when this plan is reviewed
 
@@ -35,7 +35,7 @@ Approve the correction scope below as the basis for a production-specific execut
 | PR #2 | Draft, unmerged; account cache correction to lovable-sync; head 789808c8f2136ca5b6ea84229d120433fc2b3942; CI run #11 success |
 | CI test boundary | 34 unit tests passed for cache fix; four live database tests were skipped, not passed |
 | Lovable project | a31643c5-8b7d-494c-bb54-740f76a83d78; unpublished; reported latest commit a0555288c2c434add134a2cd8bfabb67b947aa3f, different from reviewed PR heads |
-| Backups/recovery | A currently usable production restore point has not been verified in this planning task |
+| Backups/recovery | Production daily physical backup 2026-11-01 09:11:20 UTC (03:11:20 CST) is listed and its restore confirmation is accessible; confirmation was cancelled. Restore execution/integrity has not been tested. PITR is not enabled. |
 
 Production was inspected through read-only SQL and security advisors. No production role impersonation, test write, password change, Auth setting change, or DDL was performed.
 
@@ -49,6 +49,23 @@ Production was inspected through read-only SQL and security advisors. No product
 - Revoked guardian saw no athlete profile or readiness, and only its own revoked consent history.
 - These browser checks do not prove every timing scenario or arbitrary-ID API request. SQL role/claim-context tests are distinct from real JWT sessions.
 - See [post-security browser evidence](../permissions/POST_SECURITY_BROWSER_RESULTS.md) and [hosted database evidence](../permissions/APPLIED_STAGING_RESULTS.md). Their older warning/browser-limit text is superseded by the later post-security evidence where stated.
+
+## Production recovery-point verification — November 1, 2026
+
+Read-only dashboard inspection confirmed the project reference lqthjvzjkbwtggrhgpts and the main Production branch. The provider lists a physical backup made at **2026-11-01 09:11:20 UTC / November 1, 2026, 3:11:20 a.m. Central Standard Time (UTC-6)**. Eight dated entries were visible, from October 25 through November 1; this observation is not a guarantee that retention will stay unchanged.
+
+The newest backup's first Restore control opened a confirmation dialog identifying that exact backup. The authenticated dashboard account could reach the confirmation. It warned that the project would be offline and all data written after the selected backup would be lost. **The final Restore control was never pressed. Cancel was selected and the dialog's absence was confirmed.** No restore, new-project creation, add-on purchase, production setting change, or database modification was performed.
+
+This verifies **provider-reported backup availability and access to recovery preflight**, not a successful restore drill, backup-byte integrity, exact restore duration, or a no-data-loss recovery guarantee. The connected production project remains reported ACTIVE_HEALTHY. A real restore test would require a separate approved non-production destination and cost/recovery review; no such test or purchase is authorized here.
+
+Point-in-Time Recovery is not enabled: its page offers Enable add-on. No add-on was enabled. Database backups exclude Storage API object bytes; restoring the database does not recover deleted Storage objects. A database restore also does not substitute for capturing the separate Auth/dashboard configuration changed by this plan.
+
+Before production execution, recheck the newest available backup, refresh the pre-change metadata/configuration snapshot, name the recovery operator, and explicitly accept the possible post-backup data loss and unknown downtime window. Do not mark those remaining operational decisions complete merely because a Restore button is accessible. A backup restore is an emergency recovery option, not the routine rollback for this permission patch.
+
+Verified dashboard pages:
+- https://supabase.com/dashboard/project/lqthjvzjkbwtggrhgpts/database/backups/scheduled
+- https://supabase.com/dashboard/project/lqthjvzjkbwtggrhgpts/database/backups/pitr
+- Provider scope and recovery limits: https://supabase.com/docs/guides/platform/backups
 
 ## Proposed production corrections
 
