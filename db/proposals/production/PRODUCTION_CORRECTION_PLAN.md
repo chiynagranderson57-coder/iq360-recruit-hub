@@ -1,6 +1,17 @@
 # SRIQ360 Phase 2 — production correction plan for review
 Prepared November 1, 2026. **PLAN ONLY — nothing applied to production.**
-Status: ready for review; not authorization to execute, merge, publish, upgrade, or deploy.
+Status: reviewed; correction scope retained; execution remains HOLD. No authorization to execute, merge, publish, upgrade, or deploy.
+
+## Review outcome — November 1, 2026
+
+The correction scope is suitable for preparing a production-specific package. **It is not ready for production execution.** Existing staging evidence supports the proposed behaviors but cannot replace production-baseline rehearsal, recovery verification, role-management confirmation, or exact release-artifact checks.
+
+Two planning defects were corrected in this review:
+
+1. **Release ordering:** repairing production recursion could restore data access while a serving application still lacks the account-cache privacy fix. The rollout gate and sequence now require a verified compatible serving artifact, a verified absence of an active serving application, or a separately approved coordinated access hold until both changes are ready. A future intention to integrate PR #2 is insufficient.
+2. **Partial completion:** database restrictions and the Auth setting are separate operations. If one completes and the other fails, record the exact partial state, stop, preserve completed protective changes, and obtain review of the remaining action. Never automatically restore unsafe permissions or disable protections.
+
+Unresolved execution prerequisites remain: a verified recovery point, production-adapted guarded SQL and rehearsal, role-delegation workflow confirmation, actual runtime/synchronization evidence, and the authorization-path disposition. These are prerequisites, not findings that the database corrections have already failed.
 
 ## Decision requested when this plan is reviewed
 
@@ -89,7 +100,7 @@ Do not change user passwords, email verification, providers, OTP settings, sessi
 | Role-delegation decision | Confirm loss of coordinator browser grants is intended and document a workable privileged role-management procedure preserving actor checks and auditing |
 | Auth/operator readiness | Confirm the authorized operator can access the production Auth settings and approved synthetic accounts can be used for read-only smoke tests without password resets |
 | Runtime inventory | Identify the actual deployed/serving application and production connection. Lovable is reported unpublished, so do not invent a live deployment or assume the reviewed GitHub head is serving users. |
-| Synchronization | Resolve or explain Lovable's different commit; prove the eventual release artifact includes the cache fix and shared authentication/backend resolver |
+| Synchronization and release ordering | Resolve or explain Lovable's different commit. Before restoring production data access, verify the serving artifact includes the cache fix and shared authentication/backend resolver, verify there is no active serving app, or approve a coordinated access hold until the compatible app and database are ready together. Do not assume an unpublished Lovable project proves no other app is serving. No deployment or access hold is authorized by this plan. |
 | Authorization path | Current UI requests rely on database RLS. decideAthleteAccess and requireAppAuth exist but have no non-test consumers in the reviewed app. Reconcile the AGENTS server-enforcement rule before claiming full application authorization compliance; unit tests alone do not close this gap. |
 | Explicit permission | Obtain approval of the final production-specific change package and execution scope. A merge, application deployment, engine upgrade, fixture creation, or recovery action requires its own applicable authorization. |
 
@@ -97,12 +108,12 @@ The existing staging SQL contains staging-account guards and expects a helper al
 
 ## Controlled execution sequence after those gates and authorization
 
-1. Refresh identity, catalog snapshot and advisors. Stop if the expected production project, policies, ACLs or helper state differs from the reviewed package.
+1. Refresh identity, catalog snapshot, advisors, and the verified runtime. Confirm the release-ordering gate above before any operation that restores data visibility. Complete any separately authorized application integration/release preparation first; keep an approved coordinated access hold in place if that is the chosen rollout. Stop if the project, policies, ACLs, helper state, or serving artifact differs from the reviewed package.
 2. Apply only the approved database restrictions in one guarded transaction through the production connector. Check effective privileges and RLS before completion. On an error, roll back the whole transaction; do not continue statement-by-statement or use CASCADE.
-3. Apply the approved leaked-password setting separately in the exact production dashboard. It is an Auth configuration action, not SQL, and cannot share the database transaction.
+3. Apply the approved leaked-password setting separately in the exact production dashboard. It is an Auth configuration action, not SQL, and cannot share the database transaction. If this action fails after the database transaction commits, record the database change as applied and Auth protection as pending, preserve the database restrictions, stop further rollout, and resolve the specific failure. Do not rerun the database migration or restore unsafe grants to make the two statuses match.
 4. Read-only postchecks: no recursive policy; expected client capability denials; narrow readiness column grants; correct assigned-coordinator predicates; preserved service access, unrelated policies and function bodies; row counts/integrity compared to the pre-change snapshot; advisor results.
 5. Use only approved production synthetic sessions for non-destructive read checks: athlete own/other scope, active guardian allowed, revoked guardian blocked, coordinator assigned scope, sign-out and account switching. Do not copy staging mutation/fixture SQL into production.
-6. Pause for the release review. Only with separate authorization, integrate the cache fix into the intended application branch, rerun checks on the new exact head, and verify Lovable synchronization. Do not merge PR #1 based on the old green head or staging results alone.
+6. Complete the coordinated release review: confirm the exact approved application artifact and database state remain compatible; rerun required checks on any newly integrated head and verify Lovable synchronization. If an explicitly approved access hold was used, release it only after its approval conditions and verification pass. Any remaining integration, publication, or deployment still requires separate authorization. Do not merge PR #1 based on the old green head or staging results alone.
 7. Only after every required check/review passes and explicit merge authorization exists may PR #1 be considered for merge. Publishing/deployment remains a separate decision.
 
 ## Acceptance criteria and stopping conditions
@@ -111,7 +122,7 @@ The production correction is complete only when the approved changes are recorde
 
 Stop on baseline drift, unexpected data changes, loss of intended reads/writes, missing recovery readiness, wrong project, new advisor findings, or an unverified runtime. Do not broaden RLS or service-key access to make a test pass.
 
-Database transaction failure: rollback without persisting partial changes. A later compatibility problem requires a reviewed targeted repair; do not automatically restore the recursive policy, broad role RPC, or unsafe client privileges. Restore from backup only for an actual recovery need with explicit authorization and an impact assessment. Keep the application release on hold while an unexpected authorization problem is investigated.
+Database transaction failure: rollback without persisting partial database changes. Auth-setting failure is handled separately: retain completed protections, record which component is applied versus pending, and stop for targeted recovery/review. An unverified save is an unknown state that must be read back before another action. A later compatibility problem requires a reviewed targeted repair; do not automatically restore the recursive policy, broad role RPC, or unsafe client privileges. Restore from backup only for an actual recovery need with explicit authorization and an impact assessment. Keep the application release on hold while an unexpected authorization problem is investigated.
 
 ## Separate tracked items — no automatic changes
 
