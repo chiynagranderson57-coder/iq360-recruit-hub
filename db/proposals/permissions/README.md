@@ -1,10 +1,15 @@
-# SRIQ-1.2 staging permission corrections — prepared, not applied
+# SRIQ-1.2 permission corrections — applied and database-verified in staging only
 
 Prepared November 1, 2026 against read-only metadata from staging project
 `kpatqovdotkkgvpvgccg`, the non-default branch of canonical project
-`lqthjvzjkbwtggrhgpts`. No hosted permissions, policies, account rows,
-passwords, configuration, deployments, or production data were changed by this
-preparation. Do not run this proposal against production or merge any PR.
+`lqthjvzjkbwtggrhgpts`. Preparation made no hosted changes. Following explicit
+user authorization, the reviewed SQL from commit
+`9479bc6e0eca0d2144471b4e0e61ddc5e642cec8` was applied to staging as migration
+`20261101115539_sriq12_staging_permission_corrections`.
+**116 hosted SQL-context checks passed, with all test mutations rolled back.**
+See [APPLIED_STAGING_RESULTS.md](./APPLIED_STAGING_RESULTS.md).
+Production, passwords, application code, deployments, and PR merge states were
+not changed. Do not run this proposal against production or merge any PR.
 
 ## Changes proposed
 
@@ -31,8 +36,9 @@ and audit requirements. Existing sign-ins do not require this RPC.
 observed enums, relevant columns/defaults, constraints, functions, policies,
 and ACLs from baseline.json and uses only synthetic rows. Column nullability
 and application triggers are not modeled; this is an authorization test model,
-not a full database backup. Staging is PostgreSQL 17.6, so hosted application
-and database checks remain necessary after staging application.
+not a full database backup. Hosted database checks subsequently passed on
+staging's PostgreSQL 17.6. Fresh real-JWT/browser checks after this permission
+change have not been performed; earlier browser evidence remains distinct.
 
 Coverage includes:
 
@@ -58,8 +64,8 @@ These isolated tests use SQL role/claim contexts, not real JWT sessions.
 The earlier staging browser checks at commit
 `789808c8f2136ca5b6ea84229d120433fc2b3942` confirmed Athlete A, active guardian,
 revoked guardian, coordinator, sign-out, and the tested account-switch flow.
-Those checks happened before this proposal and do not validate these unapplied
-database corrections. The existing live CI tests remain skipped without
+Those checks happened before this proposal and do not independently validate
+the newly applied database corrections. The existing live CI tests remain skipped without
 synthetic credentials.
 
 ## Reproduce the isolated test
@@ -73,6 +79,9 @@ SRIQ_PGLITE_MODULE=file:///tmp/sriq-permission-harness/node_modules/@electric-sq
 ```
 
 ## Staging application and recovery requirements
+
+Application is already complete. These steps describe the controlled procedure;
+do not rerun the original SQL (its drift check deliberately stops repeat runs).
 
 1. Verify the Supabase connector destination is exactly the non-default
    staging project `kpatqovdotkkgvpvgccg`; refresh the metadata snapshot and
