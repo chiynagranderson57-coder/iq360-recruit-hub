@@ -1,0 +1,886 @@
+{
+  "capturedOn": "2026-11-06",
+  "project": "lqthjvzjkbwtggrhgpts",
+  "source": "Production policy/function overlay, with inherited synthetic schema model from staging. Not a complete production schema export.",
+  "enums": [
+    {
+      "labels": [
+        "student_athlete",
+        "parent_guardian",
+        "recruitment_coordinator"
+      ],
+      "typname": "app_role"
+    },
+    {
+      "labels": [
+        "student_athlete",
+        "parent_guardian",
+        "recruitment_coordinator"
+      ],
+      "typname": "athlete_access_role"
+    },
+    {
+      "labels": [
+        "active",
+        "archived"
+      ],
+      "typname": "record_status"
+    }
+  ],
+  "columns": [
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "athlete_access",
+      "column_name": "id",
+      "is_generated": "NEVER",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "athlete_access",
+      "column_name": "athlete_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "athlete_access",
+      "column_name": "user_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "athlete_access_role",
+      "data_type": "USER-DEFINED",
+      "table_name": "athlete_access",
+      "column_name": "access_role",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "record_status",
+      "data_type": "USER-DEFINED",
+      "table_name": "athlete_access",
+      "column_name": "status",
+      "is_generated": "NEVER",
+      "column_default": "'active'::record_status"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "athlete_access",
+      "column_name": "created_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "athlete_access",
+      "column_name": "updated_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "athlete_access",
+      "column_name": "created_by",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "athlete_readiness",
+      "column_name": "id",
+      "is_generated": "NEVER",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "athlete_readiness",
+      "column_name": "athlete_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "bool",
+      "data_type": "boolean",
+      "table_name": "athlete_readiness",
+      "column_name": "profile_complete",
+      "is_generated": "NEVER",
+      "column_default": "false"
+    },
+    {
+      "udt_name": "bool",
+      "data_type": "boolean",
+      "table_name": "athlete_readiness",
+      "column_name": "academics_complete",
+      "is_generated": "NEVER",
+      "column_default": "false"
+    },
+    {
+      "udt_name": "bool",
+      "data_type": "boolean",
+      "table_name": "athlete_readiness",
+      "column_name": "film_complete",
+      "is_generated": "NEVER",
+      "column_default": "false"
+    },
+    {
+      "udt_name": "bool",
+      "data_type": "boolean",
+      "table_name": "athlete_readiness",
+      "column_name": "recruiting_materials_complete",
+      "is_generated": "NEVER",
+      "column_default": "false"
+    },
+    {
+      "udt_name": "int4",
+      "data_type": "integer",
+      "table_name": "athlete_readiness",
+      "column_name": "readiness_score",
+      "is_generated": "ALWAYS",
+      "column_default": null
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "athlete_readiness",
+      "column_name": "updated_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "athletes",
+      "column_name": "id",
+      "is_generated": "NEVER",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "athletes",
+      "column_name": "first_name",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "athletes",
+      "column_name": "last_name",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "athletes",
+      "column_name": "sport",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "int4",
+      "data_type": "integer",
+      "table_name": "athletes",
+      "column_name": "graduation_year",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "record_status",
+      "data_type": "USER-DEFINED",
+      "table_name": "athletes",
+      "column_name": "status",
+      "is_generated": "NEVER",
+      "column_default": "'active'::record_status"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "athletes",
+      "column_name": "created_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "athletes",
+      "column_name": "updated_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "athletes",
+      "column_name": "created_by",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "audit_events",
+      "column_name": "id",
+      "is_generated": "NEVER",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "audit_events",
+      "column_name": "actor_user_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "audit_events",
+      "column_name": "athlete_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "audit_events",
+      "column_name": "event_type",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "audit_events",
+      "column_name": "entity_type",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "audit_events",
+      "column_name": "entity_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "audit_events",
+      "column_name": "action",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "audit_events",
+      "column_name": "source",
+      "is_generated": "NEVER",
+      "column_default": "'app'::text"
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "audit_events",
+      "column_name": "correlation_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "jsonb",
+      "data_type": "jsonb",
+      "table_name": "audit_events",
+      "column_name": "metadata",
+      "is_generated": "NEVER",
+      "column_default": "'{}'::jsonb"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "audit_events",
+      "column_name": "created_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "guardian_consents",
+      "column_name": "id",
+      "is_generated": "NEVER",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "guardian_consents",
+      "column_name": "athlete_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "guardian_consents",
+      "column_name": "guardian_user_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "guardian_consents",
+      "column_name": "status",
+      "is_generated": "NEVER",
+      "column_default": "'active'::text"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "guardian_consents",
+      "column_name": "granted_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "guardian_consents",
+      "column_name": "revoked_at",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "guardian_consents",
+      "column_name": "created_by",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "guardian_consents",
+      "column_name": "created_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "guardian_consents",
+      "column_name": "updated_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "user_profiles",
+      "column_name": "id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "user_profiles",
+      "column_name": "email",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "text",
+      "data_type": "text",
+      "table_name": "user_profiles",
+      "column_name": "full_name",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "record_status",
+      "data_type": "USER-DEFINED",
+      "table_name": "user_profiles",
+      "column_name": "status",
+      "is_generated": "NEVER",
+      "column_default": "'active'::record_status"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "user_profiles",
+      "column_name": "created_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "user_profiles",
+      "column_name": "updated_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "user_roles",
+      "column_name": "id",
+      "is_generated": "NEVER",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "user_roles",
+      "column_name": "user_id",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "app_role",
+      "data_type": "USER-DEFINED",
+      "table_name": "user_roles",
+      "column_name": "role",
+      "is_generated": "NEVER",
+      "column_default": null
+    },
+    {
+      "udt_name": "record_status",
+      "data_type": "USER-DEFINED",
+      "table_name": "user_roles",
+      "column_name": "status",
+      "is_generated": "NEVER",
+      "column_default": "'active'::record_status"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "user_roles",
+      "column_name": "created_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "timestamptz",
+      "data_type": "timestamp with time zone",
+      "table_name": "user_roles",
+      "column_name": "updated_at",
+      "is_generated": "NEVER",
+      "column_default": "now()"
+    },
+    {
+      "udt_name": "uuid",
+      "data_type": "uuid",
+      "table_name": "user_roles",
+      "column_name": "created_by",
+      "is_generated": "NEVER",
+      "column_default": null
+    }
+  ],
+  "policies": [
+    {
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = user_id) OR (EXISTS ( SELECT 1\n   FROM athlete_access mine\n  WHERE ((mine.athlete_id = athlete_access.athlete_id) AND (mine.user_id = auth.uid()) AND (mine.access_role = 'recruitment_coordinator'::athlete_access_role) AND (mine.status = 'active'::record_status)))))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "athlete_access",
+      "permissive": "PERMISSIVE",
+      "policyname": "athlete_access_select_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "private.has_athlete_access(athlete_id)",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "athlete_readiness",
+      "permissive": "PERMISSIVE",
+      "policyname": "athlete_readiness_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "private.is_recruitment_coordinator()",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "athlete_readiness",
+      "permissive": "PERMISSIVE",
+      "policyname": "athlete_readiness_update_coordinator",
+      "schemaname": "public",
+      "with_check": "private.is_recruitment_coordinator()"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "private.has_athlete_access(id)",
+      "roles": [
+        "public"
+      ],
+      "tablename": "athletes",
+      "permissive": "PERMISSIVE",
+      "policyname": "athletes_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM athlete_access aa\n  WHERE ((aa.athlete_id = athletes.id) AND (aa.user_id = auth.uid()) AND (aa.access_role = 'recruitment_coordinator'::athlete_access_role) AND (aa.status = 'active'::record_status))))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "athletes",
+      "permissive": "PERMISSIVE",
+      "policyname": "athletes_update_scoped",
+      "schemaname": "public",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM athlete_access aa\n  WHERE ((aa.athlete_id = athletes.id) AND (aa.user_id = auth.uid()) AND (aa.access_role = 'recruitment_coordinator'::athlete_access_role) AND (aa.status = 'active'::record_status))))"
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "public"
+      ],
+      "tablename": "audit_events",
+      "permissive": "PERMISSIVE",
+      "policyname": "audit_events_insert_self",
+      "schemaname": "public",
+      "with_check": "(auth.uid() = actor_user_id)"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = actor_user_id) OR ((athlete_id IS NOT NULL) AND private.has_athlete_access(athlete_id)))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "audit_events",
+      "permissive": "PERMISSIVE",
+      "policyname": "audit_events_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((guardian_user_id = ( SELECT auth.uid() AS uid)) OR private.has_athlete_access(athlete_id))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "guardian_consents",
+      "permissive": "PERMISSIVE",
+      "policyname": "guardian_consents_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "public"
+      ],
+      "tablename": "user_profiles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_profiles_insert_own",
+      "schemaname": "public",
+      "with_check": "(auth.uid() = id)"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = id)",
+      "roles": [
+        "public"
+      ],
+      "tablename": "user_profiles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_profiles_select_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = id)",
+      "roles": [
+        "public"
+      ],
+      "tablename": "user_profiles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_profiles_update_own",
+      "schemaname": "public",
+      "with_check": "(auth.uid() = id)"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = user_id) OR private.is_recruitment_coordinator())",
+      "roles": [
+        "public"
+      ],
+      "tablename": "user_roles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_roles_select_own",
+      "schemaname": "public",
+      "with_check": null
+    }
+  ],
+  "functions": [
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "assign_role",
+      "schema": "public",
+      "arguments": "p_user_id uuid, p_role app_role",
+      "definition": "CREATE OR REPLACE FUNCTION public.assign_role(p_user_id uuid, p_role app_role)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n  if not private.is_recruitment_coordinator() then\n    raise exception 'not_authorized'\n      using detail = 'Only an active recruitment coordinator may assign roles.';\n  end if;\n\n  if not exists (select 1 from auth.users where id = p_user_id) then\n    raise exception 'unknown_user' using detail = 'No auth user with the given id.';\n  end if;\n\n  insert into public.user_roles (user_id, role, status, created_by)\n  values (p_user_id, p_role, 'active', auth.uid())\n  on conflict (user_id, role) do update\n    set status = 'active', updated_at = now();\n\n  insert into public.audit_events\n    (actor_user_id, event_type, entity_type, entity_id, action, source, metadata)\n  values\n    (auth.uid(), 'role.assigned', 'user_role', p_user_id::text, 'grant', 'app',\n     jsonb_build_object('role', p_role, 'target_user_id', p_user_id));\n\n  return p_user_id;\nend;\n$function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "name": "has_athlete_access",
+      "schema": "private",
+      "arguments": "p_athlete_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION private.has_athlete_access(p_athlete_id uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1 from public.athlete_access aa\n    where aa.athlete_id = p_athlete_id\n      and aa.user_id = auth.uid()\n      and aa.status = 'active'\n      and (\n        aa.access_role <> 'parent_guardian'\n        or exists (\n          select 1 from public.guardian_consents gc\n          where gc.athlete_id = p_athlete_id\n            and gc.guardian_user_id = auth.uid()\n            and gc.status = 'active'\n            and gc.revoked_at is null\n        )\n      )\n  );\n$function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "name": "is_recruitment_coordinator",
+      "schema": "private",
+      "arguments": "",
+      "definition": "CREATE OR REPLACE FUNCTION private.is_recruitment_coordinator()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1\n    from public.user_roles ur\n    where ur.user_id = auth.uid()\n      and ur.role = 'recruitment_coordinator'\n      and ur.status = 'active'\n  );\n$function$\n"
+    }
+  ],
+  "table_acl": [
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=Dxtm/postgres",
+        "authenticated=Dxtm/postgres",
+        "service_role=Dxtm/postgres"
+      ],
+      "rls": true,
+      "name": "user_profiles",
+      "owner": "postgres"
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=Dxtm/postgres",
+        "authenticated=rDxtm/postgres",
+        "service_role=Dxtm/postgres"
+      ],
+      "rls": true,
+      "name": "athletes",
+      "owner": "postgres"
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=Dxtm/postgres",
+        "authenticated=rDxtm/postgres",
+        "service_role=Dxtm/postgres"
+      ],
+      "rls": true,
+      "name": "user_roles",
+      "owner": "postgres"
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=Dxtm/postgres",
+        "authenticated=Dxtm/postgres",
+        "service_role=Dxtm/postgres"
+      ],
+      "rls": true,
+      "name": "audit_events",
+      "owner": "postgres"
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=Dxtm/postgres",
+        "authenticated=rDxtm/postgres",
+        "service_role=Dxtm/postgres"
+      ],
+      "rls": true,
+      "name": "athlete_access",
+      "owner": "postgres"
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=Dxtm/postgres",
+        "authenticated=rDxtm/postgres",
+        "service_role=Dxtm/postgres"
+      ],
+      "rls": true,
+      "name": "guardian_consents",
+      "owner": "postgres"
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres",
+        "anon=Dxtm/postgres",
+        "authenticated=rwDxtm/postgres",
+        "service_role=Dxtm/postgres"
+      ],
+      "rls": true,
+      "name": "athlete_readiness",
+      "owner": "postgres"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "user_profiles_id_fkey",
+      "table": "user_profiles",
+      "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "user_profiles_pkey",
+      "table": "user_profiles",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "athletes_created_by_fkey",
+      "table": "athletes",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "athletes_graduation_year_check",
+      "table": "athletes",
+      "definition": "CHECK (((graduation_year IS NULL) OR ((graduation_year >= 1990) AND (graduation_year <= 2100))))"
+    },
+    {
+      "name": "athletes_pkey",
+      "table": "athletes",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "user_roles_created_by_fkey",
+      "table": "user_roles",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "user_roles_pkey",
+      "table": "user_roles",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "user_roles_user_id_fkey",
+      "table": "user_roles",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "user_roles_user_id_role_key",
+      "table": "user_roles",
+      "definition": "UNIQUE (user_id, role)"
+    },
+    {
+      "name": "audit_events_actor_user_id_fkey",
+      "table": "audit_events",
+      "definition": "FOREIGN KEY (actor_user_id) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "audit_events_athlete_id_fkey",
+      "table": "audit_events",
+      "definition": "FOREIGN KEY (athlete_id) REFERENCES athletes(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "audit_events_pkey",
+      "table": "audit_events",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "athlete_access_athlete_id_fkey",
+      "table": "athlete_access",
+      "definition": "FOREIGN KEY (athlete_id) REFERENCES athletes(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "athlete_access_athlete_id_user_id_key",
+      "table": "athlete_access",
+      "definition": "UNIQUE (athlete_id, user_id)"
+    },
+    {
+      "name": "athlete_access_created_by_fkey",
+      "table": "athlete_access",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "athlete_access_pkey",
+      "table": "athlete_access",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "athlete_access_user_id_fkey",
+      "table": "athlete_access",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "guardian_consents_athlete_id_fkey",
+      "table": "guardian_consents",
+      "definition": "FOREIGN KEY (athlete_id) REFERENCES athletes(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "guardian_consents_athlete_id_guardian_user_id_key",
+      "table": "guardian_consents",
+      "definition": "UNIQUE (athlete_id, guardian_user_id)"
+    },
+    {
+      "name": "guardian_consents_created_by_fkey",
+      "table": "guardian_consents",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id)"
+    },
+    {
+      "name": "guardian_consents_guardian_user_id_fkey",
+      "table": "guardian_consents",
+      "definition": "FOREIGN KEY (guardian_user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "guardian_consents_pkey",
+      "table": "guardian_consents",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "guardian_consents_status_check",
+      "table": "guardian_consents",
+      "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'revoked'::text])))"
+    },
+    {
+      "name": "athlete_readiness_athlete_id_fkey",
+      "table": "athlete_readiness",
+      "definition": "FOREIGN KEY (athlete_id) REFERENCES athletes(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "athlete_readiness_athlete_id_key",
+      "table": "athlete_readiness",
+      "definition": "UNIQUE (athlete_id)"
+    },
+    {
+      "name": "athlete_readiness_pkey",
+      "table": "athlete_readiness",
+      "definition": "PRIMARY KEY (id)"
+    }
+  ]
+}

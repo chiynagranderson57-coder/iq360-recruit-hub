@@ -1,0 +1,181 @@
+{
+  "policies": [
+    {
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = user_id) OR (EXISTS ( SELECT 1\n   FROM athlete_access mine\n  WHERE ((mine.athlete_id = athlete_access.athlete_id) AND (mine.user_id = auth.uid()) AND (mine.access_role = 'recruitment_coordinator'::athlete_access_role) AND (mine.status = 'active'::record_status)))))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "athlete_access",
+      "permissive": "PERMISSIVE",
+      "policyname": "athlete_access_select_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "private.has_athlete_access(athlete_id)",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "athlete_readiness",
+      "permissive": "PERMISSIVE",
+      "policyname": "athlete_readiness_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "private.is_recruitment_coordinator()",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "athlete_readiness",
+      "permissive": "PERMISSIVE",
+      "policyname": "athlete_readiness_update_coordinator",
+      "schemaname": "public",
+      "with_check": "private.is_recruitment_coordinator()"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "private.has_athlete_access(id)",
+      "roles": [
+        "public"
+      ],
+      "tablename": "athletes",
+      "permissive": "PERMISSIVE",
+      "policyname": "athletes_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM athlete_access aa\n  WHERE ((aa.athlete_id = athletes.id) AND (aa.user_id = auth.uid()) AND (aa.access_role = 'recruitment_coordinator'::athlete_access_role) AND (aa.status = 'active'::record_status))))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "athletes",
+      "permissive": "PERMISSIVE",
+      "policyname": "athletes_update_scoped",
+      "schemaname": "public",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM athlete_access aa\n  WHERE ((aa.athlete_id = athletes.id) AND (aa.user_id = auth.uid()) AND (aa.access_role = 'recruitment_coordinator'::athlete_access_role) AND (aa.status = 'active'::record_status))))"
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "public"
+      ],
+      "tablename": "audit_events",
+      "permissive": "PERMISSIVE",
+      "policyname": "audit_events_insert_self",
+      "schemaname": "public",
+      "with_check": "(auth.uid() = actor_user_id)"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = actor_user_id) OR ((athlete_id IS NOT NULL) AND private.has_athlete_access(athlete_id)))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "audit_events",
+      "permissive": "PERMISSIVE",
+      "policyname": "audit_events_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((guardian_user_id = ( SELECT auth.uid() AS uid)) OR private.has_athlete_access(athlete_id))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "guardian_consents",
+      "permissive": "PERMISSIVE",
+      "policyname": "guardian_consents_select_scoped",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "public"
+      ],
+      "tablename": "user_profiles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_profiles_insert_own",
+      "schemaname": "public",
+      "with_check": "(auth.uid() = id)"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = id)",
+      "roles": [
+        "public"
+      ],
+      "tablename": "user_profiles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_profiles_select_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = id)",
+      "roles": [
+        "public"
+      ],
+      "tablename": "user_profiles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_profiles_update_own",
+      "schemaname": "public",
+      "with_check": "(auth.uid() = id)"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = user_id) OR private.is_recruitment_coordinator())",
+      "roles": [
+        "public"
+      ],
+      "tablename": "user_roles",
+      "permissive": "PERMISSIVE",
+      "policyname": "user_roles_select_own",
+      "schemaname": "public",
+      "with_check": null
+    }
+  ],
+  "functions": [
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "assign_role",
+      "schema": "public",
+      "arguments": "p_user_id uuid, p_role app_role",
+      "definition": "CREATE OR REPLACE FUNCTION public.assign_role(p_user_id uuid, p_role app_role)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n  if not private.is_recruitment_coordinator() then\n    raise exception 'not_authorized'\n      using detail = 'Only an active recruitment coordinator may assign roles.';\n  end if;\n\n  if not exists (select 1 from auth.users where id = p_user_id) then\n    raise exception 'unknown_user' using detail = 'No auth user with the given id.';\n  end if;\n\n  insert into public.user_roles (user_id, role, status, created_by)\n  values (p_user_id, p_role, 'active', auth.uid())\n  on conflict (user_id, role) do update\n    set status = 'active', updated_at = now();\n\n  insert into public.audit_events\n    (actor_user_id, event_type, entity_type, entity_id, action, source, metadata)\n  values\n    (auth.uid(), 'role.assigned', 'user_role', p_user_id::text, 'grant', 'app',\n     jsonb_build_object('role', p_role, 'target_user_id', p_user_id));\n\n  return p_user_id;\nend;\n$function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "name": "has_athlete_access",
+      "schema": "private",
+      "arguments": "p_athlete_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION private.has_athlete_access(p_athlete_id uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1 from public.athlete_access aa\n    where aa.athlete_id = p_athlete_id\n      and aa.user_id = auth.uid()\n      and aa.status = 'active'\n      and (\n        aa.access_role <> 'parent_guardian'\n        or exists (\n          select 1 from public.guardian_consents gc\n          where gc.athlete_id = p_athlete_id\n            and gc.guardian_user_id = auth.uid()\n            and gc.status = 'active'\n            and gc.revoked_at is null\n        )\n      )\n  );\n$function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "name": "is_recruitment_coordinator",
+      "schema": "private",
+      "arguments": "",
+      "definition": "CREATE OR REPLACE FUNCTION private.is_recruitment_coordinator()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1\n    from public.user_roles ur\n    where ur.user_id = auth.uid()\n      and ur.role = 'recruitment_coordinator'\n      and ur.status = 'active'\n  );\n$function$\n"
+    }
+  ]
+}
