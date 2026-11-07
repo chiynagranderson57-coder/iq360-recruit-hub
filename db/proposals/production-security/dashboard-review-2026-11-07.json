@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-07",
+  "project": "lqthjvzjkbwtggrhgpts",
+  "source": "authenticated Supabase dashboard; read-only UI inspection",
+  "backup": {
+    "latest_scheduled_utc": "2026-11-07T09:10:59Z",
+    "latest_scheduled_chicago": "2026-11-07 03:10:59 CST",
+    "type": "PHYSICAL",
+    "restore_action_available": true,
+    "restore_executed": false,
+    "restore_tested": false,
+    "storage_objects_included": false,
+    "point_in_time_recovery_enabled": false,
+    "verified_url": "https://supabase.com/dashboard/project/lqthjvzjkbwtggrhgpts/database/backups/scheduled"
+  },
+  "data_api": {
+    "enabled": true,
+    "exposed_schemas": [
+      "graphql_public",
+      "public"
+    ],
+    "private_exposed": false,
+    "exposed_tables_count": 7,
+    "exposed_functions_count": 1,
+    "automatically_expose_new_tables": true,
+    "extra_search_path": [
+      "public",
+      "extensions"
+    ],
+    "verified_url": "https://supabase.com/dashboard/project/lqthjvzjkbwtggrhgpts/integrations/data_api/settings"
+  },
+  "changes_made": [],
+  "limits": "A listed restore point was verified, not a successful restore rehearsal. No configuration was changed."
+}

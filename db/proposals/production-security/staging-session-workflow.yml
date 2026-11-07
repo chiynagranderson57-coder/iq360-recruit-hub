@@ -1,0 +1,64 @@
+# PROPOSAL ONLY. Activate at .github/workflows/staging-session-review.yml only
+# after approval to add the exact review branch to Staging's allowed branches.
+# No environment protection rule or secret is changed by this saved proposal.
+name: Staging synthetic session review
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [review/canonical-staging-2026-11-06]
+    paths: [.github/workflows/staging-session-review.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sriq-staging-session-review
+  cancel-in-progress: false
+
+jobs:
+  sessions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: Staging
+    env:
+      VITE_APP_ENV: staging
+      VITE_SUPABASE_URL: https://kpatqovdotkkgvpvgccg.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_OryWEL4DLvGflsxfCFi2kg_Mox1YwEs
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, verified 2026-11-07
+        with:
+          # Reviewed application code only; subsequent branch edits cannot
+          # silently replace the code that receives synthetic credentials.
+          ref: 6e5a8b117aa0d3a24b747735636046f233ffdd95
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2, verified 2026-11-07
+        with:
+          bun-version: 1.3.2
+      - name: Install locked dependencies without test credentials
+        run: bun install --frozen-lockfile
+      - name: Validate synthetic sign-ins and scoped reads
+        env:
+          SRIQ_E2E_ATHLETE_A_EMAIL: ${{ secrets.SRIQ_E2E_ATHLETE_A_EMAIL }}
+          SRIQ_E2E_ATHLETE_A_PASSWORD: ${{ secrets.SRIQ_E2E_ATHLETE_A_PASSWORD }}
+          SRIQ_E2E_ATHLETE_A_ID: ${{ secrets.SRIQ_E2E_ATHLETE_A_ID }}
+          SRIQ_E2E_ATHLETE_B_ID: ${{ secrets.SRIQ_E2E_ATHLETE_B_ID }}
+          SRIQ_E2E_GUARDIAN_ACTIVE_EMAIL: ${{ secrets.SRIQ_E2E_GUARDIAN_ACTIVE_EMAIL }}
+          SRIQ_E2E_GUARDIAN_ACTIVE_PASSWORD: ${{ secrets.SRIQ_E2E_GUARDIAN_ACTIVE_PASSWORD }}
+          # Existing stored names have SRIQ26_ rather than SRIQ_ for this pair.
+          SRIQ_E2E_GUARDIAN_REVOKED_EMAIL: ${{ secrets.SRIQ26_E2E_GUARDIAN_REVOKED_EMAIL }}
+          SRIQ_E2E_GUARDIAN_REVOKED_PASSWORD: ${{ secrets.SRIQ26_E2E_GUARDIAN_REVOKED_PASSWORD }}
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          assert.equal(process.env.VITE_APP_ENV, 'staging');
+          assert.equal(process.env.VITE_SUPABASE_URL, 'https://kpatqovdotkkgvpvgccg.supabase.co');
+          const required = ['SRIQ_E2E_ATHLETE_A_EMAIL', 'SRIQ_E2E_ATHLETE_A_PASSWORD',
+            'SRIQ_E2E_ATHLETE_A_ID', 'SRIQ_E2E_ATHLETE_B_ID',
+            'SRIQ_E2E_GUARDIAN_ACTIVE_EMAIL', 'SRIQ_E2E_GUARDIAN_ACTIVE_PASSWORD',
+            'SRIQ_E2E_GUARDIAN_REVOKED_EMAIL', 'SRIQ_E2E_GUARDIAN_REVOKED_PASSWORD'];
+          const missing = required.filter(name => !process.env[name]);
+          if (missing.length) throw new Error(`Missing synthetic test inputs: ${missing.join(', ')}`);
+          console.log('Staging destination and all required synthetic inputs are present.');
+          JS
+          bun run test -- src/lib/sriq-rls.e2e.test.ts

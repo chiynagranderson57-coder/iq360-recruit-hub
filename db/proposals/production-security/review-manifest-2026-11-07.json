@@ -9,7 +9,11 @@
     "structure_fingerprint.sql": "43b36f5584bd0d92ea70d4d0bd95d945dd3959e3fa1a548436d1a3e33bc663d8",
     "test_proposal.mjs": "50dbe6a3861f573e047c4a271c36feb8899cd8ebb0c676a3ef49ae2b9b038804",
     "native_pg17_adapter.mjs": "2af60062e70c57c14ee03f0d1ab6aa1b5d67d79ec376c2ce9355b22bbda9a7d5",
-    "release-candidate/20261107100941_production_security_correction.sql": "e119877e16f2021e4ac3bca2b72063befe815a026f2d66be1db07130c664331c"
+    "release-candidate/20261107100941_production_security_correction.sql": "e119877e16f2021e4ac3bca2b72063befe815a026f2d66be1db07130c664331c",
+    "dashboard-review-2026-11-07.json": "bf70948ebe4241b7114a9eb8a3d2b5404385ddd499e93285a56da152544057cf",
+    "app-checks-2026-11-07.json": "28770261c74dd0bdcfba23fea2382ffa217d444367c934f00cd9a8ddd82a57fb",
+    "staging-test-access-review-2026-11-07.json": "60d75eb46cd8f3f828dd67ccf81e625d0c2e3084574fa8ecaef6535f5a882caa",
+    "staging-session-workflow.yml": "a93eaba47b7f369994f0e21345841493240fa4d30a7dba28838592f43e29d43f"
   },
   "production_read_only_preflight": {
     "result": "PASS",

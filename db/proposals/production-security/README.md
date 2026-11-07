@@ -33,9 +33,9 @@ Native PostgreSQL 17.6 reproduction is documented in the latest review. No appli
 
 ## Remaining release gates
 
-1. Verify private is excluded from hosted Data API exposure; SQL-session and role/database settings did not reveal authoritative exposed-schema configuration.
-2. Verify a usable current backup/recovery point. CLI backup read needs authentication; the dashboard is at sign-in.
-3. Complete controlled real-JWT session verification and canonical frontend release checks. SQL claim simulation and historical screenshots are not substitutes.
+1. Complete: the authenticated dashboard confirms only graphql_public and public are exposed; private is excluded. Automatic exposure of new tables remains enabled and needs separate disposition.
+2. A scheduled physical backup is listed for November 7, 2026 at 09:10:59 UTC (03:10:59 CST), with Restore available. No restore was executed/tested; PITR is not enabled, and Storage objects are excluded. Confirm the acceptable recovery window before application.
+3. Frontend checks now pass: lint (0 errors, 6 warnings), typecheck, 34 tests, build, secret-pattern scan and read-only Auth health. Four real-JWT tests remain skipped locally. A workflow proposal can use existing protected Staging credentials after approval to allow this exact review branch. SQL claim simulation and historical screenshots are not substitutes.
 4. Review managed supabase_admin defaults separately. They remain unchanged; broad managed defaults remain a residual issue for future objects.
 5. Review leaked-password protection separately. The production advisor still reports it disabled, and still reports authenticated EXECUTE on public.assign_role because this correction has not been applied.
 6. Assemble the exact destination, hash, impact and recovery approval summary. Explicit founder approval is required before production application; no application approval is requested for this incomplete package.

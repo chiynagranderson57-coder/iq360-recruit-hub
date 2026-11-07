@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-07",
+  "source": "authenticated GitHub settings UI; names only; secret values are not exposed",
+  "environment": "Staging",
+  "allowed_branch_rules": [
+    "Staging"
+  ],
+  "required_reviewers_enabled": false,
+  "wait_timer_enabled": false,
+  "repository_secrets_count": 0,
+  "environment_secret_names": [
+    "SRIQ26_E2E_GUARDIAN_REVOKED_EMAIL",
+    "SRIQ26_E2E_GUARDIAN_REVOKED_PASSWORD",
+    "SRIQ_E2E_ATHLETE_A_EMAIL",
+    "SRIQ_E2E_ATHLETE_A_ID",
+    "SRIQ_E2E_ATHLETE_A_PASSWORD",
+    "SRIQ_E2E_ATHLETE_B_ID",
+    "SRIQ_E2E_GUARDIAN_ACTIVE_EMAIL",
+    "SRIQ_E2E_GUARDIAN_ACTIVE_PASSWORD",
+    "SRIQ_E2E_GUARDIAN_ID",
+    "SRIQ_E2E_GUARDIAN_REVOKED_ID"
+  ],
+  "proposed_additional_branch_rule": "review/canonical-staging-2026-11-06",
+  "proposed_workflow": "staging-session-workflow.yml",
+  "changes_made": [],
+  "approval_required": "Add exactly this review branch to Staging allowed branches and activate the saved workflow for four read-only synthetic sign-in/SELECT tests."
+}

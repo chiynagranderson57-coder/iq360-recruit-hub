@@ -81,3 +81,29 @@ References reviewed:
 - https://supabase.com/docs/guides/database/postgres/row-level-security
 - https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable
 - https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
+
+## Authenticated dashboard follow-up
+
+Secure sign-in succeeded with the founder-selected GitHub method. Read-only dashboard inspection then confirmed the main production project:
+
+- Data API is enabled; only graphql_public and public are exposed. The private schema is unchecked. Extra search path is public, extensions. Automatic exposure of new tables is ON; it was not changed.
+- A PHYSICAL scheduled backup is listed at 2026-11-07 09:10:59 UTC / 03:10:59 CST, with Restore available. No restore was initiated or tested. PITR is not enabled; the dashboard offers it as an add-on. Database backups exclude Storage objects.
+- Dashboard settings and recovery evidence are saved in dashboard-review-2026-11-07.json. These observations supersede the earlier sign-in/exposure-access blockers above. They do not prove a successful recovery rehearsal or resolve the acceptable recovery window.
+
+Verified pages:
+
+- https://supabase.com/dashboard/project/lqthjvzjkbwtggrhgpts/integrations/data_api/settings
+- https://supabase.com/dashboard/project/lqthjvzjkbwtggrhgpts/database/backups/scheduled
+- https://supabase.com/dashboard/project/lqthjvzjkbwtggrhgpts/database/backups/pitr
+
+## Application checks and prepared real-session run
+
+All local application gates were rerun after the database review: frozen-lockfile install, lint (0 errors, 6 pre-existing warnings), typecheck, 34 passing tests, successful build, no sb_secret key-pattern matches in output, and read-only production Auth health HTTP 200. Four real-JWT tests remain skipped locally because their protected credentials are not present in the local process. See app-checks-2026-11-07.json. This supersedes the earlier statement that frontend checks were not rerun.
+
+Authenticated GitHub settings inspection found the existing synthetic credentials in environment Staging. No secret value was read or copied. The revoked-guardian secret pair uses SRIQ26_ names while the tests expect SRIQ_; the saved workflow maps them explicitly. The environment currently allows only branch Staging, so the review branch is not authorized to receive these credentials yet. No protection rule was changed.
+
+staging-session-workflow.yml is a complete, validated proposal stored outside .github/workflows. It pins the reviewed application commit and action revisions, uses contents:read, targets only the staging backend, exposes the eight required secret inputs only during the test step, fails when inputs are missing, and runs the four existing sign-in/SELECT tests. It neither changes application data nor deploys services. Authentication creates/ends synthetic sessions; no messages are sent or passwords reset. It does not establish coordinator-session or live write coverage.
+
+Required approval: add only review/canonical-staging-2026-11-06 to the existing Staging environment allowed-branch rules, keep the Staging rule, and activate/run the saved workflow. This grants the exact review branch access to existing synthetic test credentials; it does not grant production credentials or approve production changes. GitHub settings evidence: staging-test-access-review-2026-11-07.json.
+
+Current stopping point: approval for that specific protected-environment access change. No need to request or re-enter the stored passwords.
