@@ -49,6 +49,7 @@ jobs:
         run: |
           node --input-type=module <<'JS'
           import assert from 'node:assert/strict';
+          import { createHash } from 'node:crypto';
           assert.equal(process.env.VITE_APP_ENV, 'staging');
           assert.equal(process.env.VITE_SUPABASE_URL, 'https://kpatqovdotkkgvpvgccg.supabase.co');
           const required = ['SRIQ_E2E_ATHLETE_A_EMAIL', 'SRIQ_E2E_ATHLETE_A_PASSWORD',
@@ -57,6 +58,25 @@ jobs:
             'SRIQ_E2E_GUARDIAN_REVOKED_EMAIL', 'SRIQ_E2E_GUARDIAN_REVOKED_PASSWORD'];
           const missing = required.filter(name => !process.env[name]);
           if (missing.length) throw new Error(`Missing synthetic test inputs: ${missing.join(', ')}`);
+          const approved = [
+            ['athlete', 'SRIQ_E2E_ATHLETE_A', '6968dbc823d5b2620fe33536348cad3b'],
+            ['guardian', 'SRIQ_E2E_GUARDIAN_ACTIVE', '002fa2b64247f2d6dd045a3dac0aaf05'],
+            ['revoked', 'SRIQ_E2E_GUARDIAN_REVOKED', 'e741facf6a1f016682fbdfae1d27152a'],
+          ];
+          let mismatch = false;
+          for (const [slot, prefix, expected] of approved) {
+            const email = process.env[prefix + '_EMAIL'];
+            const password = process.env[prefix + '_PASSWORD'];
+            const matches = createHash('md5').update(email.trim().toLowerCase()).digest('hex') === expected;
+            const outerWhitespace = email !== email.trim();
+            const lineBreak = /[\\r\\n]/.test(password);
+            console.log(JSON.stringify({ slot, email_matches_approved_staging_account: matches,
+              email_outer_whitespace: outerWhitespace,
+              password_outer_whitespace: password !== password.trim(),
+              password_has_line_break: lineBreak }));
+            if (!matches || outerWhitespace || lineBreak) mismatch = true;
+          }
+          if (mismatch) throw new Error('Stored inputs do not match clean approved staging credentials; no sign-in retries performed.');
           console.log('Staging destination and all required synthetic inputs are present.');
           JS
           bun run test -- src/lib/sriq-rls.e2e.test.ts
