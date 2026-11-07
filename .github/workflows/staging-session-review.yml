@@ -69,7 +69,7 @@ jobs:
             const password = process.env[prefix + '_PASSWORD'];
             const matches = createHash('md5').update(email.trim().toLowerCase()).digest('hex') === expected;
             const outerWhitespace = email !== email.trim();
-            const lineBreak = /[\\r\\n]/.test(password);
+            const lineBreak = password.includes(String.fromCharCode(10)) || password.includes(String.fromCharCode(13));
             console.log(JSON.stringify({ slot, email_matches_approved_staging_account: matches,
               email_outer_whitespace: outerWhitespace,
               password_outer_whitespace: password !== password.trim(),
