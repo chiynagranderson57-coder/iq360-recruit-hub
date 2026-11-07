@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 const { PGlite } = await import(process.env.SRIQ_PGLITE_MODULE ?? "@electric-sql/pglite");
 const baseline = JSON.parse(await readFile(new URL("./baseline.json", import.meta.url), "utf8"));
+const structure = JSON.parse(await readFile(new URL("./production-structure-2026-11-07.json", import.meta.url), "utf8"));
 const proposal = await readFile(new URL("./proposal.sql", import.meta.url), "utf8");
 const q = (s) => `'${s.replaceAll("'", "''")}'`;
 const i = (s) => `"${s.replaceAll('"', '""')}"`;
@@ -45,22 +46,25 @@ async function setup() {
   for (const e of baseline.enums)
     await db.exec(`create type public.${i(e.typname)} as enum (${e.labels.map(q).join(",")});`);
   for (const t of baseline.table_acl) {
-    const cols = baseline.columns
+    const cols = structure.columns
       .filter((c) => c.table_name === t.name)
       .map((c) => {
         let d = `${i(c.column_name)} ${i(c.udt_name)}`;
         if (c.is_generated === "ALWAYS")
           d +=
-            " generated always as ((profile_complete::int + academics_complete::int + film_complete::int + recruiting_materials_complete::int)*25) stored";
+            ` generated always as (${c.generation_expression}) stored`;
         else if (c.column_default) d += ` default ${c.column_default}`;
+        if (c.is_nullable === "NO") d += " not null";
         return d;
       });
     await db.exec(
       `create table public.${i(t.name)} (${cols.join(",")}); alter table public.${i(t.name)} enable row level security;`,
     );
   }
-  for (const c of baseline.constraints)
+  for (const c of [...structure.constraints].sort((a,b) => Number(a.definition.startsWith("FOREIGN KEY")) - Number(b.definition.startsWith("FOREIGN KEY"))))
     await db.exec(`alter table public.${i(c.table)} add constraint ${i(c.name)} ${c.definition};`);
+  for (const definition of new Set(structure.triggers.map(t => t.function))) await db.exec(definition);
+  for (const trigger of structure.triggers) await db.exec(trigger.definition);
   for (const f of baseline.functions) await db.exec(f.definition);
   for (const f of baseline.functions.filter((f) => f.acl)) {
     const sig = `${i(f.schema)}.${i(f.name)}(${f.arguments})`;

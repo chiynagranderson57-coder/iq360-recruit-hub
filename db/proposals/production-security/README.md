@@ -48,3 +48,7 @@ Pre-commit failures roll back the complete transaction. After commit, pause fron
 Production has not been secured by merely saving this proposal. The main app remains unmerged and unlaunched. See docs/reviews/PRODUCTION_SECURITY_CORRECTION_PLAN_2026_11_06.md and CANONICAL_SESSION_RESULTS_2026_11_06.md for release gates and manual screenshot limits.
 
 References reviewed: https://supabase.com/changelog.md (including CLI v3 local-default breaking change), https://supabase.com/docs/guides/database/postgres/row-level-security.md.
+# November 7 validation update
+
+See STRUCTURE_REVIEW_2026_11_07.md for the current limitations. The harness now overlays the captured production structure (58 columns, 26 constraints, four triggers), and all 126 assertions pass. PostgreSQL 17 validation and complete hosted dependency/ACL fidelity remain pending. Historical descriptions below refer to the earlier baseline model.
+
