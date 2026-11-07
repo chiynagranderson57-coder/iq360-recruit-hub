@@ -119,3 +119,13 @@ Follow-up diagnostics used boolean-only comparisons inside the protected runner.
 The final workflow includes this current-account preflight and will stop before sign-in when identifiers do not match. Once protected login inputs are refreshed, the same workflow can run the four assertions without new code or destination changes. No secret values are stored in these review files.
 
 Current stopping point: human entry of valid staging login inputs in GitHub's secure environment-secret form, starting with the athlete account. Do not paste passwords into chat. No production correction, Auth setting change or merge is approved or performed by the staging access approval.
+
+## Secure input refresh and partial live validation
+
+The founder securely updated all three stored login pairs. The protected runner verified that guardian/revoked identifiers matched; the athlete identifier still differed and was corrected to the independently verified value without changing a password. All three identifier comparisons now pass. Passwords remain undisclosed.
+
+The next run authenticated athlete/active guardian but exposed malformed saved athlete record-ID inputs. The workflow was corrected to use the two independently verified synthetic staging athlete UUIDs directly. No application or database authorization rule was changed.
+
+Run 42365680023, workflow commit c70c2ffe2b926a1f02c5b6821d412e933b09e6bb: THREE PASSED, ONE BLOCKED at authentication. Passed: athlete reads own record; athlete cannot read another athlete; active guardian reads linked athlete. The revoked guardian's password was rejected (HTTP 400 invalid_credentials), so its denial assertion has not executed. A rejected login is not proof of revoked access enforcement.
+
+Current next action: securely correct the revoked-guardian staging password input, then rerun the same workflow. The 163 native PostgreSQL checks and prior application checks remain separate evidence. Production remains unchanged, and no migration/merge is authorized by these session results.

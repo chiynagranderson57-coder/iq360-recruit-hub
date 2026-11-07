@@ -14,7 +14,7 @@
     "app-checks-2026-11-07.json": "28770261c74dd0bdcfba23fea2382ffa217d444367c934f00cd9a8ddd82a57fb",
     "staging-test-access-review-2026-11-07.json": "8f6d72a63b2d520b662187703f2e77bb0b019737f115cab70d49189c2b3d076c",
     "staging-session-workflow.yml": "a93eaba47b7f369994f0e21345841493240fa4d30a7dba28838592f43e29d43f",
-    "staging-session-result-2026-11-07.json": "36f4c49725cb2e15903e0368ae98ee1eb2a5e9dbb306a586d20c91e914cd58d5"
+    "staging-session-result-2026-11-07.json": "ef8094423fb45d1a0d7019d0084e1cabb6f6a44a7a9fa9cb3ce865b053fcca30"
   },
   "production_read_only_preflight": {
     "result": "PASS",
@@ -29,6 +29,6 @@
   },
   "active_workflow": {
     "path": ".github/workflows/staging-session-review.yml",
-    "sha256": "3177215f15771cd1ff901f4113e662fbd18b58235ba56e2ae2331cdda9ace9ba"
+    "sha256": "83297baa1160c5e41377a752385ea33ff7d89c636a4875dd300823238d641f29"
   }
 }

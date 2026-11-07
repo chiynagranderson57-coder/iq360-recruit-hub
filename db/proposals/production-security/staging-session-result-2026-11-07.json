@@ -1,15 +1,15 @@
 {
   "date": "2026-11-07",
   "environment": "Staging",
-  "workflow_commit": "2feb74dbab7a7b032a73d87f7f09fd603d7a6f66",
+  "workflow_commit": "c70c2ffe2b926a1f02c5b6821d412e933b09e6bb",
   "test_source_commit": "6e5a8b117aa0d3a24b747735636046f233ffdd95",
-  "run_id": 42363868804,
-  "run_url": "https://github.com/chiynagranderson57-coder/iq360-recruit-hub/actions/runs/42363868804",
-  "result": "BLOCKED_BY_INVALID_TEST_CREDENTIALS",
+  "run_id": 42365680023,
+  "run_url": "https://github.com/chiynagranderson57-coder/iq360-recruit-hub/actions/runs/42365680023",
+  "result": "PARTIAL_PASS_REVOKED_LOGIN_BLOCKED",
   "tests_attempted": 4,
-  "tests_passed": 0,
-  "authentication_failures": 4,
-  "access_assertions_executed": 0,
+  "tests_passed": 3,
+  "authentication_failures": 1,
+  "access_assertions_executed": 3,
   "error": {
     "status": 400,
     "code": "invalid_credentials"
@@ -18,31 +18,75 @@
   "diagnostics": [
     {
       "slot": "athlete",
-      "email_matches_approved_staging_account": false,
+      "email_matches_approved_staging_account": true,
       "email_outer_whitespace": false,
       "password_outer_whitespace": false,
       "password_has_line_break": false
     },
     {
       "slot": "guardian",
-      "email_matches_approved_staging_account": false,
+      "email_matches_approved_staging_account": true,
       "email_outer_whitespace": false,
       "password_outer_whitespace": false,
       "password_has_line_break": false
     },
     {
       "slot": "revoked",
-      "email_matches_approved_staging_account": false,
+      "email_matches_approved_staging_account": true,
       "email_outer_whitespace": false,
       "password_outer_whitespace": false,
       "password_has_line_break": false
     }
   ],
-  "diagnostic_basis": "Current active access links and active/revoked consent roles for the scoped staging test athlete. Earlier comparison to isolated harness actors was superseded before any account/configuration input was changed.",
+  "diagnostic_basis": "Protected-runner comparison to current live staging access-linked identities; all three identifiers now match. No raw credential values logged.",
   "credentials_exposed": false,
   "password_resets": 0,
   "application_data_changes": 0,
   "production_changes": 0,
   "merges": 0,
-  "next_required_input": "Securely refresh the protected login inputs to match current staging test accounts; no passwords in chat."
+  "next_required_input": "Re-enter the current revoked-guardian staging login password through the protected GitHub form.",
+  "initial_run": {
+    "run_id": 42363868804,
+    "run_url": "https://github.com/chiynagranderson57-coder/iq360-recruit-hub/actions/runs/42363868804",
+    "result": "BLOCKED_BY_INVALID_TEST_CREDENTIALS",
+    "tests_attempted": 4,
+    "tests_passed": 0,
+    "authentication_failures": 4,
+    "access_assertions_executed": 0,
+    "error": {
+      "status": 400,
+      "code": "invalid_credentials"
+    },
+    "diagnostic_run_id": 42364225322,
+    "diagnostics": [
+      {
+        "slot": "athlete",
+        "email_matches_approved_staging_account": true,
+        "email_outer_whitespace": false,
+        "password_outer_whitespace": false,
+        "password_has_line_break": false
+      },
+      {
+        "slot": "guardian",
+        "email_matches_approved_staging_account": true,
+        "email_outer_whitespace": false,
+        "password_outer_whitespace": false,
+        "password_has_line_break": false
+      },
+      {
+        "slot": "revoked",
+        "email_matches_approved_staging_account": true,
+        "email_outer_whitespace": false,
+        "password_outer_whitespace": false,
+        "password_has_line_break": false
+      }
+    ]
+  },
+  "passed_checks": [
+    "athlete can read own record",
+    "athlete cannot read another athlete record",
+    "active guardian can read linked athlete"
+  ],
+  "blocked_check": "revoked guardian cannot read linked athlete",
+  "record_id_configuration": "Workflow now uses the two verified synthetic staging athlete record UUIDs directly; malformed stored ID inputs are no longer used."
 }
