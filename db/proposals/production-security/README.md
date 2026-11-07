@@ -1,56 +1,47 @@
-# Production security proposal — prepared, not applied
+# Production security correction — review candidate, not applied
 
-Latest status: see [PG17_REVIEW_2026_11_07.md](PG17_REVIEW_2026_11_07.md). All 126 existing assertions also pass on PostgreSQL 17.5 via PGlite 0.3.14, matching production's major version (17.6). A fresh read-only ownership/ACL/dependency snapshot is saved. Hosted fidelity and release gates remain pending; historical test descriptions below are retained for context.
+Latest review: [RELEASE_REVIEW_2026_11_07.md](RELEASE_REVIEW_2026_11_07.md).
 
-November 6, 2026. Review-only SQL, not an executable release migration. No hosted DDL/DML, Auth configuration, application deployment, or PR merge occurred in this preparation.
+All 163 isolated checks pass on native PostgreSQL 17.6 as a non-superuser postgres owner, and on PGlite 0.3.14 / PostgreSQL 17.5. Production reports 17.6. The catalog-only production preflight passes inside a read-only transaction. No hosted correction, Auth change, deployment, migration-history change, or merge has occurred.
 
-## Changes
+## Candidate behavior
 
-- Add the private user-bound assignment helper before replacing the recursive athlete_access SELECT policy.
-- Limit readiness completion writes to globally active coordinators assigned to that athlete, and deny identity/score edits.
-- Remove unnecessary browser table-wide privileges and postgres future-table defaults.
-- Deny browser role delegation through existing assign_role. No server administration endpoint or replacement role function is added.
+- Replace recursive athlete-access lookup with a private, user-bound active-assignment helper.
+- Require an active global coordinator role AND an active athlete-specific coordinator assignment for readiness writes.
+- Restrict readiness updates to completion flags and updated_at; preserve generated score and identity columns.
+- Remove unnecessary browser TRUNCATE, REFERENCES, TRIGGER and MAINTAIN privileges, including postgres future-table defaults.
+- Deny browser role delegation through existing assign_role, preserving its body, owner and service-role grant.
 
-Existing user/access/consent rows and existing function bodies are preserved in the model. The helper is deliberately private, authenticated-only, fixed-search-path SECURITY DEFINER so its narrow current-user lookup does not recurse through the same RLS policy.
+Private schema usage remains owner-only. Authenticated function EXECUTE lets bound policies use the helper; a direct client lookup of the private function remains denied. No server administration endpoint is introduced.
 
-SQL SHA256: dbe194948fc4f501e1c185f5f5351bcb3face7f3641409b8ab5ea2e84ad7e6c3.
+## Files and integrity
 
-## Verification
+proposal.sql and release-candidate/20261107100941_production_security_correction.sql are byte-identical. The candidate filename was generated with Supabase CLI 3.0.0 after reviewing current help. It is deliberately outside active migration directories.
 
-126 isolated PostgreSQL assertions passed using PGlite 0.5.14 / PostgreSQL 18.6. The harness reproduces the production access-policy recursion error (42P17) and global coordinator readiness gap before applying the proposal to its local synthetic model. It checks preserved reads, scoped access links, null user denial, revoked guardian denial, assigned/unassigned writes, column tampering denial, browser role delegation denial, unchanged existing functions/service table privileges/row counts, future defaults, and rollback on unexpected target/policy/column-grant drift.
+SQL SHA256: e119877e16f2021e4ac3bca2b72063befe815a026f2d66be1db07130c664331c.
 
-Reproduce with a test-only dependency outside the app checkout:
+review-manifest-2026-11-07.json records artifact hashes and the hosted read-only preflight. preflight.sql contains only the opening catalog guard in a read-only transaction; it does not apply the correction. structure_fingerprint.sql fingerprints scoped columns, constraints, triggers, policies and enums without reading application rows.
+
+## Reproduce the isolated checks
 
 ```sh
-npm install --prefix /tmp/sriq-canonical-permission-harness --ignore-scripts --no-audit --no-fund @electric-sql/pglite@0.5.14
-SRIQ_PGLITE_MODULE=file:///tmp/sriq-canonical-permission-harness/node_modules/@electric-sql/pglite/dist/index.js node db/proposals/production-security/test_proposal.mjs
+npm install --prefix /tmp/sriq-pg17-validation --ignore-scripts --no-audit --no-fund @electric-sql/pglite@0.3.14
+SRIQ_PGLITE_MODULE=file:///tmp/sriq-pg17-validation/node_modules/@electric-sql/pglite/dist/index.js node db/proposals/production-security/test_proposal.mjs
 ```
 
-No application dependency or lockfile changed. No hosted TRUNCATE or write probe was performed.
+Native PostgreSQL 17.6 reproduction is documented in the latest review. No application dependency or lockfile changed.
 
-## Evidence and limits
+## Remaining release gates
 
-catalog-overlay.json contains freshly read production policies and three existing function definitions/ACLs. baseline.json combines this overlay with the earlier staging-derived schema model. Table ACLs, readiness columns and defaults were compared with the read-only production catalog during this preparation. This is NOT a complete production schema clone: remaining columns, constraints, triggers, owners, dependencies, schema exposure and managed defaults need a complete production baseline before release. Column nullability and application triggers are not modeled. Existing function ACL reconstruction is simplified in the inherited harness. Hosted PostgreSQL is 17.6; this test runs 18.6. Real JWT and network behavior are not covered by these SQL contexts. These limitations prevent an application approval request now.
+1. Verify private is excluded from hosted Data API exposure; SQL-session and role/database settings did not reveal authoritative exposed-schema configuration.
+2. Verify a usable current backup/recovery point. CLI backup read needs authentication; the dashboard is at sign-in.
+3. Complete controlled real-JWT session verification and canonical frontend release checks. SQL claim simulation and historical screenshots are not substitutes.
+4. Review managed supabase_admin defaults separately. They remain unchanged; broad managed defaults remain a residual issue for future objects.
+5. Review leaked-password protection separately. The production advisor still reports it disabled, and still reports authenticated EXECUTE on public.assign_role because this correction has not been applied.
+6. Assemble the exact destination, hash, impact and recovery approval summary. Explicit founder approval is required before production application; no application approval is requested for this incomplete package.
 
-The sriq.review_target custom setting is only an explicit accident guard. Anyone with SQL access could set it; it proves neither destination nor approval. Keep the proposal unexecutable by default. Verify the connector project independently immediately before any separately approved application.
-
-## Required before production approval
-
-1. Capture and compare the complete relevant production schema/ACL/owner/trigger/dependency baseline and strengthen drift guards accordingly.
-2. Reproduce against the matching PostgreSQL major version and production-shaped schema; run a controlled staging rehearsal if the exact migration sequence has not been tested there.
-3. Verify the helper's private-schema ACL and ownership on the hosted system. Review managed supabase_admin defaults separately rather than altering them blindly.
-4. Generate a versioned migration through the Supabase CLI after current CLI help/version review; retain the SQL hash and attach reproducible evidence.
-5. Verify a usable backup/recovery point and prepare the exact destination/impact/validation approval summary. Founder approval is required before application. No approval is being requested for this incomplete release package.
-6. Handle leaked-password protection as a separate reviewed Auth configuration change. No password resets are needed for SQL preparation.
+Historical structure and PG17 reviews retain earlier counts, hashes and modeling limitations. This README and RELEASE_REVIEW_2026_11_07.md describe the current candidate.
 
 ## Recovery
 
-Pre-commit failures roll back the complete transaction. After commit, pause frontend release and prefer a reviewed forward correction. Never automatically restore recursive policies, broad readiness updates, or browser role delegation. Capture the prior definitions/ACLs for diagnosis; do not use CASCADE or overwrite newer policy changes.
-
-Production has not been secured by merely saving this proposal. The main app remains unmerged and unlaunched. See docs/reviews/PRODUCTION_SECURITY_CORRECTION_PLAN_2026_11_06.md and CANONICAL_SESSION_RESULTS_2026_11_06.md for release gates and manual screenshot limits.
-
-References reviewed: https://supabase.com/changelog.md (including CLI v3 local-default breaking change), https://supabase.com/docs/guides/database/postgres/row-level-security.md.
-# November 7 validation update
-
-See STRUCTURE_REVIEW_2026_11_07.md for the current limitations. The harness now overlays the captured production structure (58 columns, 26 constraints, four triggers), and all 126 assertions pass. PostgreSQL 17 validation and complete hosted dependency/ACL fidelity remain pending. Historical descriptions below refer to the earlier baseline model.
-
+Pre-commit failures roll back the whole transaction. After commit, pause frontend release and prefer a reviewed forward correction. Do not automatically restore recursive policies, broad readiness updates or browser role delegation. Do not use CASCADE or overwrite newer changes. Verify a usable recovery point before any application approval.

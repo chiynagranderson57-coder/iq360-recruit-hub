@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-07",
+  "project": "lqthjvzjkbwtggrhgpts",
+  "branch": "review/canonical-staging-2026-11-06",
+  "status": "review candidate only; production application not authorized",
+  "sha256": {
+    "proposal.sql": "e119877e16f2021e4ac3bca2b72063befe815a026f2d66be1db07130c664331c",
+    "preflight.sql": "a2ea9e2fb4ca2154e93416b171f3d28f437defe74c2ea01702395030c7c6ebed",
+    "structure_fingerprint.sql": "43b36f5584bd0d92ea70d4d0bd95d945dd3959e3fa1a548436d1a3e33bc663d8",
+    "test_proposal.mjs": "50dbe6a3861f573e047c4a271c36feb8899cd8ebb0c676a3ef49ae2b9b038804",
+    "native_pg17_adapter.mjs": "2af60062e70c57c14ee03f0d1ab6aa1b5d67d79ec376c2ce9355b22bbda9a7d5",
+    "release-candidate/20261107100941_production_security_correction.sql": "e119877e16f2021e4ac3bca2b72063befe815a026f2d66be1db07130c664331c"
+  },
+  "production_read_only_preflight": {
+    "result": "PASS",
+    "database_role": "postgres",
+    "server_version": "17.6",
+    "transaction_read_only": "on",
+    "structure_md5": "1f5ffd87499f4b0ffe0ad50334f15b59"
+  },
+  "validation": {
+    "native": "native17-result-2026-11-07.json",
+    "pglite": "pg17-acl-result-2026-11-07.json"
+  }
+}

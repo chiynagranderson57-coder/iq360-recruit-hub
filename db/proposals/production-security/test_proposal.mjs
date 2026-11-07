@@ -1,9 +1,14 @@
-// Local synthetic PostgreSQL only. No network or hosted database connection.
+// Isolated synthetic PostgreSQL only. Never connects to a hosted database.
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 const { PGlite } = await import(process.env.SRIQ_PGLITE_MODULE ?? "@electric-sql/pglite");
 const baseline = JSON.parse(await readFile(new URL("./baseline.json", import.meta.url), "utf8"));
-const structure = JSON.parse(await readFile(new URL("./production-structure-2026-11-07.json", import.meta.url), "utf8"));
+const structure = JSON.parse(
+  await readFile(new URL("./production-structure-2026-11-07.json", import.meta.url), "utf8"),
+);
+const catalog = JSON.parse(
+  await readFile(new URL("./production-acl-2026-11-07.json", import.meta.url), "utf8"),
+);
 const proposal = await readFile(new URL("./proposal.sql", import.meta.url), "utf8");
 const q = (s) => `'${s.replaceAll("'", "''")}'`;
 const i = (s) => `"${s.replaceAll('"', '""')}"`;
@@ -37,22 +42,27 @@ const check = (actual, expected, label) => {
 const scalar = async (db, sql) => (await db.query(sql)).rows[0].value;
 async function setup() {
   const db = new PGlite();
-  await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
-    create schema auth; create schema private;
+  if (db.bootstrapReviewRoles) await db.bootstrapReviewRoles();
+  else
+    await db.exec(
+      "create role anon; create role authenticated; create role service_role bypassrls;",
+    );
+  await db.exec(`create schema auth; create schema private;
     create table auth.users(id uuid primary key, email text, raw_user_meta_data jsonb default '{}');
     create function auth.uid() returns uuid language sql stable as $$
       select (nullif(current_setting('request.jwt.claims',true),'')::jsonb->>'sub')::uuid $$;
-    grant usage on schema public,auth,private to anon,authenticated,service_role;`);
+    grant usage on schema public,auth to anon,authenticated,service_role;`);
+  // Production private has a null ACL: retain owner-only schema privileges.
+  assert.equal(catalog.schemas.find((s) => s.name === "private").acl, null);
   for (const e of baseline.enums)
     await db.exec(`create type public.${i(e.typname)} as enum (${e.labels.map(q).join(",")});`);
-  for (const t of baseline.table_acl) {
+  for (const t of catalog.tables) {
     const cols = structure.columns
       .filter((c) => c.table_name === t.name)
       .map((c) => {
         let d = `${i(c.column_name)} ${i(c.udt_name)}`;
         if (c.is_generated === "ALWAYS")
-          d +=
-            ` generated always as (${c.generation_expression}) stored`;
+          d += ` generated always as (${c.generation_expression}) stored`;
         else if (c.column_default) d += ` default ${c.column_default}`;
         if (c.is_nullable === "NO") d += " not null";
         return d;
@@ -61,16 +71,24 @@ async function setup() {
       `create table public.${i(t.name)} (${cols.join(",")}); alter table public.${i(t.name)} enable row level security;`,
     );
   }
-  for (const c of [...structure.constraints].sort((a,b) => Number(a.definition.startsWith("FOREIGN KEY")) - Number(b.definition.startsWith("FOREIGN KEY"))))
+  for (const c of [...structure.constraints].sort(
+    (a, b) =>
+      Number(a.definition.startsWith("FOREIGN KEY")) -
+      Number(b.definition.startsWith("FOREIGN KEY")),
+  ))
     await db.exec(`alter table public.${i(c.table)} add constraint ${i(c.name)} ${c.definition};`);
-  for (const definition of new Set(structure.triggers.map(t => t.function))) await db.exec(definition);
+  for (const definition of new Set(structure.triggers.map((t) => t.function)))
+    await db.exec(definition);
   for (const trigger of structure.triggers) await db.exec(trigger.definition);
   for (const f of baseline.functions) await db.exec(f.definition);
   for (const f of baseline.functions.filter((f) => f.acl)) {
     const sig = `${i(f.schema)}.${i(f.name)}(${f.arguments})`;
     await db.exec(`revoke all on function ${sig} from public,anon,authenticated,service_role;`);
-    if (f.acl.some((s) => s.startsWith("authenticated=")))
-      await db.exec(`grant execute on function ${sig} to authenticated;`);
+    for (const role of ["anon", "authenticated", "service_role"])
+      if (
+        f.acl.some((s) => s.startsWith(`${role}=`) && s.split("=")[1].split("/")[0].includes("X"))
+      )
+        await db.exec(`grant execute on function ${sig} to ${role};`);
   }
   for (const p of baseline.policies)
     await db.exec(
@@ -86,10 +104,12 @@ async function setup() {
     t: "TRIGGER",
     m: "MAINTAIN",
   };
-  for (const t of baseline.table_acl) {
+  for (const t of catalog.tables) {
     await db.exec(`revoke all on public.${i(t.name)} from public,anon,authenticated,service_role;`);
     for (const role of ["anon", "authenticated", "service_role"]) {
       const letters = t.acl
+        .slice(1, -1)
+        .split(",")
         .find((s) => s.startsWith(`${role}=`))
         ?.split("=")[1]
         .split("/")[0];
@@ -100,7 +120,7 @@ async function setup() {
     }
   }
   await db.exec(
-    "alter default privileges for role postgres in schema public grant truncate,references,trigger,maintain on tables to anon,authenticated,service_role;",
+    "alter default privileges for role postgres in schema public grant select,insert,update,delete,truncate,references,trigger,maintain on tables to postgres,anon,authenticated,service_role;",
   );
   for (const [kind, id] of Object.entries(users))
     await db.query("insert into auth.users(id,email) values($1,$2)", [
@@ -141,8 +161,22 @@ async function denied(db, id, sql, label, role) {
 const serviceAclSql =
   "select array_agg(relname||':'||privilege order by relname,privilege) value from pg_class c join pg_namespace n on n.oid=c.relnamespace cross join unnest(array['SELECT','INSERT','UPDATE','DELETE','TRUNCATE','REFERENCES','TRIGGER','MAINTAIN']) privilege where n.nspname='public' and c.relkind='r' and has_table_privilege('service_role',c.oid,privilege)";
 const db = await setup();
+const serviceFunctionAclSql =
+  "select array_agg(n.nspname||'.'||p.proname||':'||has_function_privilege('service_role',p.oid,'EXECUTE')::text order by n.nspname,p.proname) value from pg_proc p join pg_namespace n on n.oid=p.pronamespace where (n.nspname='private' and p.proname in ('has_athlete_access','is_recruitment_coordinator')) or (n.nspname='public' and p.proname='assign_role')";
+const serviceFunctionsBefore = await scalar(db, serviceFunctionAclSql);
+check(
+  await scalar(
+    db,
+    "select has_function_privilege('service_role','public.assign_role(uuid,public.app_role)','EXECUTE') value",
+  ),
+  true,
+  "model retains production service-role function grant",
+);
 const serviceBefore = await scalar(db, serviceAclSql);
-await assert.rejects(asUser(db,users.coordinator,"select * from public.athlete_access"), e=>e.code==='42P17');
+await assert.rejects(
+  asUser(db, users.coordinator, "select * from public.athlete_access"),
+  (e) => e.code === "42P17",
+);
 assertions++;
 // The readiness gap can still be reproduced through its definer-backed SELECT.
 
@@ -165,14 +199,77 @@ check(
 );
 await db.exec("set sriq.review_target='lqthjvzjkbwtggrhgpts'");
 await db.exec(proposal);
+check(
+  await scalar(db, serviceFunctionAclSql),
+  serviceFunctionsBefore,
+  "service-role existing function permissions unchanged",
+);
+for (const role of ["anon", "authenticated", "service_role"])
+  for (const privilege of ["USAGE", "CREATE"])
+    check(
+      await scalar(db, `select has_schema_privilege('${role}','private','${privilege}') value`),
+      false,
+      `${role} private schema ${privilege} stays denied`,
+    );
+await denied(
+  db,
+  users.coordinator,
+  `select private.is_assigned_athlete_coordinator('${a}')`,
+  "direct private helper lookup denied by schema ACL while bound policies work",
+);
+check(
+  await scalar(
+    db,
+    "select pg_get_userbyid(proowner) value from pg_proc where oid='private.is_assigned_athlete_coordinator(uuid)'::regprocedure",
+  ),
+  "postgres",
+  "new helper retains reviewed owner",
+);
+check(
+  await scalar(
+    db,
+    "select prosecdef and proconfig=array['search_path=\"\"']::text[] value from pg_proc where oid='private.is_assigned_athlete_coordinator(uuid)'::regprocedure",
+  ),
+  true,
+  "new helper uses fixed empty search path",
+);
 for (const kind of ["athlete", "guardian", "revoked", "coordinator", "assignmentOnly"]) {
- const rows=(await asUser(db,users[kind],"select athlete_id,user_id from public.athlete_access")).rows;
- check(rows.length>0,true,`${kind} access lookup no longer recurses`);
- check(rows.every(r=>r.user_id===users[kind] || (kind==='coordinator' && r.athlete_id===a) || (kind==='assignmentOnly' && r.athlete_id===b)),true,`${kind} access links remain scoped`);
+  const rows = (
+    await asUser(db, users[kind], "select athlete_id,user_id from public.athlete_access")
+  ).rows;
+  check(rows.length > 0, true, `${kind} access lookup no longer recurses`);
+  check(
+    rows.every(
+      (r) =>
+        r.user_id === users[kind] ||
+        (kind === "coordinator" && r.athlete_id === a) ||
+        (kind === "assignmentOnly" && r.athlete_id === b),
+    ),
+    true,
+    `${kind} access links remain scoped`,
+  );
 }
-check((await asUser(db,null,"select id from public.athletes")).rows.length,0,"no user claim sees no athletes");
-check(await scalar(db,"select has_function_privilege('anon','private.is_assigned_athlete_coordinator(uuid)','EXECUTE') value"),false,"anonymous cannot invoke helper");
-check(await scalar(db,"select has_function_privilege('authenticated','private.is_assigned_athlete_coordinator(uuid)','EXECUTE') value"),true,"policy can invoke private helper");
+check(
+  (await asUser(db, null, "select id from public.athletes")).rows.length,
+  0,
+  "no user claim sees no athletes",
+);
+check(
+  await scalar(
+    db,
+    "select has_function_privilege('anon','private.is_assigned_athlete_coordinator(uuid)','EXECUTE') value",
+  ),
+  false,
+  "anonymous cannot invoke helper",
+);
+check(
+  await scalar(
+    db,
+    "select has_function_privilege('authenticated','private.is_assigned_athlete_coordinator(uuid)','EXECUTE') value",
+  ),
+  true,
+  "policy can invoke private helper",
+);
 for (const t of baseline.table_acl) {
   for (const role of ["anon", "authenticated"])
     for (const capability of ["TRUNCATE", "REFERENCES", "TRIGGER", "MAINTAIN"])
@@ -320,13 +417,26 @@ for (const drift of [
   "alter policy athlete_access_select_own on public.athlete_access using(true)",
   "create policy unexpected_update on public.athlete_readiness for update to authenticated using(true)",
   "grant update(athlete_id) on public.athlete_readiness to authenticated",
+  "grant usage on schema private to authenticated",
+  "grant create on schema public to service_role; alter table public.athletes owner to service_role",
+  "grant execute on function private.has_athlete_access(uuid) to anon",
+  "revoke execute on function public.assign_role(uuid,public.app_role) from service_role",
+  "alter function private.is_recruitment_coordinator() security invoker",
+  "grant create on schema private to service_role; alter function private.has_athlete_access(uuid) owner to service_role",
+  "grant select on public.athletes to public",
+  "alter default privileges for role postgres in schema public grant select on tables to public",
+  "alter default privileges for role postgres grant truncate on tables to authenticated",
+  "grant service_role to authenticated",
+  "alter table public.athletes add column unexpected_column int",
+  "alter table public.athletes add constraint unexpected_check check(first_name <> '')",
+  "alter type public.record_status add value 'unexpected'",
 ]) {
   const driftDb = await setup();
   await driftDb.exec("set sriq.review_target='lqthjvzjkbwtggrhgpts'");
   await driftDb.exec(drift);
   await assert.rejects(
     driftDb.exec(proposal),
-    /target missing|policy changed|Unexpected column grants/,
+    /target missing|policy changed|Unexpected column grants|Schema ownership|Table ownership|Function ownership|Table default ACL|Browser role|Catalog structure/,
   );
   assertions++;
   await driftDb.exec("rollback;");

@@ -1,0 +1,6 @@
+{
+  "result": "PASS",
+  "assertions": 163,
+  "version": "PostgreSQL 17.6 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0, 64-bit",
+  "scope": "isolated synthetic PostgreSQL only; no hosted changes or real JWT authentication"
+}
