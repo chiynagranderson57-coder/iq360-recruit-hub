@@ -39,8 +39,8 @@ jobs:
         env:
           SRIQ_E2E_ATHLETE_A_EMAIL: ${{ secrets.SRIQ_E2E_ATHLETE_A_EMAIL }}
           SRIQ_E2E_ATHLETE_A_PASSWORD: ${{ secrets.SRIQ_E2E_ATHLETE_A_PASSWORD }}
-          SRIQ_E2E_ATHLETE_A_ID: ${{ secrets.SRIQ_E2E_ATHLETE_A_ID }}
-          SRIQ_E2E_ATHLETE_B_ID: ${{ secrets.SRIQ_E2E_ATHLETE_B_ID }}
+          SRIQ_E2E_ATHLETE_A_ID: 9d0d7e9c-05b3-4ea5-bdd9-82b761c2a22d
+          SRIQ_E2E_ATHLETE_B_ID: 0784d468-02a1-4c54-b1c2-fce5444b6737
           SRIQ_E2E_GUARDIAN_ACTIVE_EMAIL: ${{ secrets.SRIQ_E2E_GUARDIAN_ACTIVE_EMAIL }}
           SRIQ_E2E_GUARDIAN_ACTIVE_PASSWORD: ${{ secrets.SRIQ_E2E_GUARDIAN_ACTIVE_PASSWORD }}
           # Existing stored names have SRIQ26_ rather than SRIQ_ for this pair.
