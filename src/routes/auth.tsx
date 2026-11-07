@@ -5,10 +5,14 @@ import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { signOut, useSession } from "@/hooks/use-session";
 import { createLogger } from "@/lib/logger";
+import { PasswordRecovery } from "@/components/password-recovery";
 
 const log = createLogger("auth");
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>): { mode?: "recovery" | "forgot" | undefined } => ({
+    mode: search["mode"] === "recovery" || search["mode"] === "forgot" ? search["mode"] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Sign in — Sports Recruit IQ360™" },
@@ -23,6 +27,11 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
+  const { mode } = Route.useSearch();
+  return mode ? <PasswordRecovery mode={mode} /> : <SignInPage />;
+}
+
+function SignInPage() {
   const session = useSession();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -81,6 +90,11 @@ function AuthPage() {
           <Button type="submit" disabled={busy}>
             {busy ? "Signing in…" : "Sign in"}
           </Button>
+          <p>
+            <a href="/auth?mode=forgot" className="underline">
+              Forgot your password?
+            </a>
+          </p>
         </form>
       )}
     </AppShell>
