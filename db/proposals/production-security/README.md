@@ -1,5 +1,7 @@
 # Production security proposal — prepared, not applied
 
+Latest status: see [PG17_REVIEW_2026_11_07.md](PG17_REVIEW_2026_11_07.md). All 126 existing assertions also pass on PostgreSQL 17.5 via PGlite 0.3.14, matching production's major version (17.6). A fresh read-only ownership/ACL/dependency snapshot is saved. Hosted fidelity and release gates remain pending; historical test descriptions below are retained for context.
+
 November 6, 2026. Review-only SQL, not an executable release migration. No hosted DDL/DML, Auth configuration, application deployment, or PR merge occurred in this preparation.
 
 ## Changes

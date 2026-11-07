@@ -1,0 +1,186 @@
+{
+  "tables": [
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "rls": true,
+      "name": "athlete_access",
+      "owner": "postgres",
+      "force_rls": false
+    },
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "rls": true,
+      "name": "athlete_readiness",
+      "owner": "postgres",
+      "force_rls": false
+    },
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "rls": true,
+      "name": "athletes",
+      "owner": "postgres",
+      "force_rls": false
+    },
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "rls": true,
+      "name": "audit_events",
+      "owner": "postgres",
+      "force_rls": false
+    },
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "rls": true,
+      "name": "guardian_consents",
+      "owner": "postgres",
+      "force_rls": false
+    },
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "rls": true,
+      "name": "user_profiles",
+      "owner": "postgres",
+      "force_rls": false
+    },
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "rls": true,
+      "name": "user_roles",
+      "owner": "postgres",
+      "force_rls": false
+    }
+  ],
+  "schemas": [
+    {
+      "acl": "{supabase_admin=UC/supabase_admin,anon=U/supabase_admin,authenticated=U/supabase_admin,service_role=U/supabase_admin,supabase_auth_admin=UC/supabase_admin,dashboard_user=UC/supabase_admin,postgres=U/supabase_admin}",
+      "name": "auth",
+      "owner": "supabase_admin"
+    },
+    {
+      "acl": null,
+      "name": "private",
+      "owner": "postgres"
+    },
+    {
+      "acl": "{pg_database_owner=UC/pg_database_owner,=U/pg_database_owner,postgres=U/pg_database_owner,anon=U/pg_database_owner,authenticated=U/pg_database_owner,service_role=U/pg_database_owner}",
+      "name": "public",
+      "owner": "pg_database_owner"
+    }
+  ],
+  "functions": [
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "has_athlete_access",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "identity": "p_athlete_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION private.has_athlete_access(p_athlete_id uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1 from public.athlete_access aa\n    where aa.athlete_id = p_athlete_id\n      and aa.user_id = auth.uid()\n      and aa.status = 'active'\n      and (\n        aa.access_role <> 'parent_guardian'\n        or exists (\n          select 1 from public.guardian_consents gc\n          where gc.athlete_id = p_athlete_id\n            and gc.guardian_user_id = auth.uid()\n            and gc.status = 'active'\n            and gc.revoked_at is null\n        )\n      )\n  );\n$function$\n",
+      "security_definer": true
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "is_recruitment_coordinator",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "identity": "",
+      "definition": "CREATE OR REPLACE FUNCTION private.is_recruitment_coordinator()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1\n    from public.user_roles ur\n    where ur.user_id = auth.uid()\n      and ur.role = 'recruitment_coordinator'\n      and ur.status = 'active'\n  );\n$function$\n",
+      "security_definer": true
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "assign_role",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "identity": "p_user_id uuid, p_role app_role",
+      "definition": "CREATE OR REPLACE FUNCTION public.assign_role(p_user_id uuid, p_role app_role)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n  if not private.is_recruitment_coordinator() then\n    raise exception 'not_authorized'\n      using detail = 'Only an active recruitment coordinator may assign roles.';\n  end if;\n\n  if not exists (select 1 from auth.users where id = p_user_id) then\n    raise exception 'unknown_user' using detail = 'No auth user with the given id.';\n  end if;\n\n  insert into public.user_roles (user_id, role, status, created_by)\n  values (p_user_id, p_role, 'active', auth.uid())\n  on conflict (user_id, role) do update\n    set status = 'active', updated_at = now();\n\n  insert into public.audit_events\n    (actor_user_id, event_type, entity_type, entity_id, action, source, metadata)\n  values\n    (auth.uid(), 'role.assigned', 'user_role', p_user_id::text, 'grant', 'app',\n     jsonb_build_object('role', p_role, 'target_user_id', p_user_id));\n\n  return p_user_id;\nend;\n$function$\n",
+      "security_definer": true
+    }
+  ],
+  "column_acl": [],
+  "default_acl": [
+    {
+      "acl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}",
+      "type": "S",
+      "owner": "supabase_admin",
+      "schema": "public"
+    },
+    {
+      "acl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}",
+      "type": "f",
+      "owner": "supabase_admin",
+      "schema": "public"
+    },
+    {
+      "acl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}",
+      "type": "r",
+      "owner": "supabase_admin",
+      "schema": "public"
+    },
+    {
+      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+      "type": "S",
+      "owner": "postgres",
+      "schema": "public"
+    },
+    {
+      "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "type": "f",
+      "owner": "postgres",
+      "schema": "public"
+    },
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "type": "r",
+      "owner": "postgres",
+      "schema": "public"
+    }
+  ],
+  "dependencies": [
+    {
+      "type": "n",
+      "dependent": "policy user_roles_select_own on table user_roles",
+      "referenced": "function private.is_recruitment_coordinator()"
+    },
+    {
+      "type": "n",
+      "dependent": "policy athletes_select_scoped on table athletes",
+      "referenced": "function private.has_athlete_access(uuid)"
+    },
+    {
+      "type": "n",
+      "dependent": "policy audit_events_select_scoped on table audit_events",
+      "referenced": "function private.has_athlete_access(uuid)"
+    },
+    {
+      "type": "n",
+      "dependent": "policy guardian_consents_select_scoped on table guardian_consents",
+      "referenced": "function private.has_athlete_access(uuid)"
+    },
+    {
+      "type": "n",
+      "dependent": "policy athlete_readiness_select_scoped on table athlete_readiness",
+      "referenced": "function private.has_athlete_access(uuid)"
+    },
+    {
+      "type": "n",
+      "dependent": "policy athlete_readiness_update_coordinator on table athlete_readiness",
+      "referenced": "function private.is_recruitment_coordinator()"
+    },
+    {
+      "type": "n",
+      "dependent": "policy athlete_readiness_update_coordinator on table athlete_readiness",
+      "referenced": "function private.is_recruitment_coordinator()"
+    }
+  ],
+  "server_version": "17.6",
+  "api_schema_setting": null
+}
