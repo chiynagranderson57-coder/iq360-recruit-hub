@@ -35,7 +35,7 @@ jobs:
           bun-version: 1.3.2
       - name: Install locked dependencies without test credentials
         run: bun install --frozen-lockfile
-      - name: Diagnose staging inputs without sign-in retries
+      - name: Validate current staging inputs and scoped reads
         env:
           SRIQ_E2E_ATHLETE_A_EMAIL: ${{ secrets.SRIQ_E2E_ATHLETE_A_EMAIL }}
           SRIQ_E2E_ATHLETE_A_PASSWORD: ${{ secrets.SRIQ_E2E_ATHLETE_A_PASSWORD }}
@@ -79,4 +79,4 @@ jobs:
           if (mismatch) throw new Error('Stored inputs do not match clean approved staging credentials; no sign-in retries performed.');
           console.log('Staging destination and all required synthetic inputs are present.');
           JS
-          echo 'Diagnostic only. No sign-in or access assertions repeated.'
+          bun run test -- src/lib/sriq-rls.e2e.test.ts

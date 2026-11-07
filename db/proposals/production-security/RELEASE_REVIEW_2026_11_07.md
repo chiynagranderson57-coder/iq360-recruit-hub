@@ -107,3 +107,15 @@ staging-session-workflow.yml is a complete, validated proposal stored outside .g
 Required approval: add only review/canonical-staging-2026-11-06 to the existing Staging environment allowed-branch rules, keep the Staging rule, and activate/run the saved workflow. This grants the exact review branch access to existing synthetic test credentials; it does not grant production credentials or approve production changes. GitHub settings evidence: staging-test-access-review-2026-11-07.json.
 
 Current stopping point: approval for that specific protected-environment access change. No need to request or re-enter the stored passwords.
+
+## Approved activation and live-run blocker
+
+The founder approved the exact review branch's Staging-environment credential access and automated sign-in checks. GitHub confirmed the new branch rule saved successfully; the existing Staging branch rule and other protection settings remain in place. The workflow was activated at .github/workflows/staging-session-review.yml, commit 2feb74dbab7a7b032a73d87f7f09fd603d7a6f66. This supersedes the earlier approval stopping point.
+
+Run 42363868804 executed the four existing tests with all required inputs present. All four stopped at Supabase authentication, HTTP 400 invalid_credentials. No scoped data-read assertion ran. This is an authentication/input blocker, not evidence that RLS passed or failed. See staging-session-result-2026-11-07.json.
+
+Follow-up diagnostics used boolean-only comparisons inside the protected runner. The authoritative comparison is based on current staging access links and active/revoked guardian-consent roles, not the isolated harness actor IDs. All three stored email identifiers differ from the current linked accounts. Whitespace and line-break checks were false. Diagnostic-only runs did not retry authentication. Raw credential values were neither read nor logged; no account, password, consent or application-data change occurred.
+
+The final workflow includes this current-account preflight and will stop before sign-in when identifiers do not match. Once protected login inputs are refreshed, the same workflow can run the four assertions without new code or destination changes. No secret values are stored in these review files.
+
+Current stopping point: human entry of valid staging login inputs in GitHub's secure environment-secret form, starting with the athlete account. Do not paste passwords into chat. No production correction, Auth setting change or merge is approved or performed by the staging access approval.

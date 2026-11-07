@@ -3,7 +3,8 @@
   "source": "authenticated GitHub settings UI; names only; secret values are not exposed",
   "environment": "Staging",
   "allowed_branch_rules": [
-    "Staging"
+    "Staging",
+    "review/canonical-staging-2026-11-06"
   ],
   "required_reviewers_enabled": false,
   "wait_timer_enabled": false,
@@ -22,6 +23,12 @@
   ],
   "proposed_additional_branch_rule": "review/canonical-staging-2026-11-06",
   "proposed_workflow": "staging-session-workflow.yml",
-  "changes_made": [],
-  "approval_required": "Add exactly this review branch to Staging allowed branches and activate the saved workflow for four read-only synthetic sign-in/SELECT tests."
+  "changes_made": [
+    "Added exact review branch rule following explicit founder approval; retained existing Staging rule.",
+    "Activated .github/workflows/staging-session-review.yml at commit 2feb74dbab7a7b032a73d87f7f09fd603d7a6f66."
+  ],
+  "approval_required": null,
+  "approval_received": true,
+  "workflow_run_id": 42363868804,
+  "next_required_input": "Refresh protected login inputs for current staging access-linked accounts; the branch-access approval is complete."
 }
